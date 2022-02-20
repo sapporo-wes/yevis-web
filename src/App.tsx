@@ -1,8 +1,10 @@
 import CssBaseline from '@mui/material/CssBaseline'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import React from 'react'
+import { Provider } from 'react-redux'
 
-import MainHero from '@/components/MainHero'
+import Main from '@/pages/Main'
+import store from '@/store'
 
 const theme = createTheme({
   palette: {
@@ -27,10 +29,12 @@ const theme = createTheme({
 
 const App: React.VFC = () => {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <MainHero />
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Main />
+      </ThemeProvider>
+    </Provider>
   )
 }
 
