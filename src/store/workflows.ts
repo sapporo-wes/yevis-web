@@ -1,13 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { getTools } from '@/api/trs'
-import { RootState } from '@/store'
+import { getTools, isGhTrs } from '@/api/trs'
 import { Tool } from '@/types/trs'
 
 interface WorkflowsState {
   workflows: Tool[]
   loading: boolean
-  error: Error | null
+  error: string | null
 }
 
 const initialState: WorkflowsState = {
@@ -16,20 +15,17 @@ const initialState: WorkflowsState = {
   error: null,
 }
 
-export const fetchWorkflows = createAsyncThunk<
-  Tool[],
-  void,
-  {
-    rejectValue: Error
+export const fetchWorkflows = createAsyncThunk(
+  'workflows/fetch',
+  async (_, { rejectWithValue }) => {
+    try {
+      await isGhTrs()
+      return await getTools()
+    } catch (err) {
+      return rejectWithValue((err as Error).message)
+    }
   }
->('workflows/fetch', async (_, { rejectWithValue }) => {
-  try {
-    console.log('HERE')
-    return await getTools()
-  } catch (err) {
-    return rejectWithValue(err as Error)
-  }
-})
+)
 
 export const workflowsSlice = createSlice({
   name: 'workflows',
@@ -43,17 +39,14 @@ export const workflowsSlice = createSlice({
       state.loading = false
       state.workflows = action.payload
     },
-    [fetchWorkflows.rejected.type]: (state, action: PayloadAction<Error>) => {
+    [fetchWorkflows.rejected.type]: (state, action: PayloadAction<string>) => {
       state.loading = false
       state.error = action.payload
     },
   },
 })
 
-export const workflowsSelector = (state: RootState) => state.workflows.workflows
-export const workflowsLoadingSelector = (state: RootState) =>
-  state.workflows.loading
-export const workflowsErrorSelector = (state: RootState) =>
-  state.workflows.error
+export const getWfNames = (state: WorkflowsState) =>
+  state.workflows.map((wf) => wf.name)
 
 export default workflowsSlice.reducer

@@ -13,7 +13,7 @@ export const getServiceInfo = async (): Promise<ServiceInfo> => {
   return await res.json()
 }
 
-export const isGhTrs = async (): Promise<boolean> => {
+export const isGhTrs = async (): Promise<void> => {
   const serviceInfo = await getServiceInfo()
   const artifact = serviceInfo?.type?.artifact
   if (!artifact) {
@@ -23,12 +23,11 @@ export const isGhTrs = async (): Promise<boolean> => {
   if (!version) {
     throw new Error('Failed to get version from service-info')
   }
-  if (!(artifact === 'gh_trs' && version === '2.0.1')) {
+  if (!(artifact === 'gh-trs' && version === '2.0.1')) {
     throw new Error(
-      'The ddbj/yevis-web only supports the gh_trs version 2.0.1 as a TRS API'
+      `The ddbj/yevis-web only supports artifact: gh-trs and version: 2.0.1 as a TRS API. The response from service-info is artifact: ${artifact} and version: ${version}`
     )
   }
-  return true
 }
 
 export const getTools = async (): Promise<Tool[]> => {

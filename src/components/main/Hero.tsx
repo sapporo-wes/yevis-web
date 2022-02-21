@@ -1,7 +1,4 @@
-import Box from '@mui/material/Box'
-import Link from '@mui/material/Link'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
+import { Box, Link, Stack, Typography } from '@mui/material'
 import { styled } from '@mui/system'
 import React from 'react'
 

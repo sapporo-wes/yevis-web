@@ -1,16 +1,12 @@
-import Box from '@mui/material/Box'
-import React, { useEffect } from 'react'
+import { Box, Stack } from '@mui/material'
+import React from 'react'
 
-import { RootState, useAppDispatch, useAppSelector } from '@/store'
-import { fetchWorkflows } from '@/store/workflows'
+import WfCard from '@/components/main/WfCard'
+import WfNameFilter from '@/components/main/WfNameFilter'
+import { RootState, useAppSelector } from '@/store'
 
 const WfList: React.VFC = () => {
   const { workflows } = useAppSelector((state: RootState) => state.workflows)
-  const dispatch = useAppDispatch()
-  useEffect(() => {
-    ;(async () => dispatch(fetchWorkflows()))()
-  }, [dispatch])
-
   return (
     <Box
       sx={{
@@ -22,7 +18,25 @@ const WfList: React.VFC = () => {
           mx: 'auto',
           px: 8,
         }}>
-        {JSON.stringify(workflows)}
+        <Stack spacing={2}>
+          <Stack direction='row'>
+            <WfNameFilter />
+          </Stack>
+          <Stack spacing={2}>
+            {[...Array(Math.ceil(workflows.length / 2)).keys()].map(
+              (rowInd) => (
+                <Stack key={rowInd} direction='row' spacing={2}>
+                  {workflows[rowInd * 2] && (
+                    <WfCard wf={workflows[rowInd * 2]} />
+                  )}
+                  {workflows[rowInd * 2 + 1] && (
+                    <WfCard wf={workflows[rowInd * 2 + 1]} />
+                  )}
+                </Stack>
+              )
+            )}
+          </Stack>
+        </Stack>
       </Box>
     </Box>
   )

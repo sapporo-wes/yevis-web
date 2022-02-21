@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 
+import FilterReducer from '@/store/filter'
 import WorkflowsReducer from '@/store/workflows'
 
 export const store = configureStore({
   reducer: {
     workflows: WorkflowsReducer,
+    filter: FilterReducer,
   },
 })
 

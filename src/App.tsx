@@ -2,8 +2,10 @@ import CssBaseline from '@mui/material/CssBaseline'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import React from 'react'
 import { Provider } from 'react-redux'
+import { Route, Routes } from 'react-router-dom'
 
 import Main from '@/pages/Main'
+import Workflow from '@/pages/Workflow'
 import store from '@/store'
 
 const theme = createTheme({
@@ -32,7 +34,14 @@ const App: React.VFC = () => {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Main />
+        <Routes>
+          <Route index element={<Main />} />
+          <Route path='workflows/:id'>
+            <Route index element={<Workflow />} />
+            <Route path='versions/:version' element={<Workflow />} />
+          </Route>
+          <Route path='*' element={<div>no page</div>} />
+        </Routes>
       </ThemeProvider>
     </Provider>
   )
