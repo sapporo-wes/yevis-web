@@ -1,5 +1,6 @@
 const DEFAULT_WF_REPO = 'ddbj/yevis-workflows'
 const DEFAULT_WF_REPO_BRANCH = 'main'
+const DEFAULT_WF_REPO_GH_PAGES_BRANCH = 'gh-pages'
 const DEFAULT_TRS_ENDPOINT = 'https://ddbj.github.io/yevis-workflows/'
 
 export const wfRepo = (): string => {
@@ -7,7 +8,7 @@ export const wfRepo = (): string => {
   if (typeof envWfRepo === 'boolean') {
     return DEFAULT_WF_REPO
   }
-  return envWfRepo ? envWfRepo : DEFAULT_WF_REPO
+  return envWfRepo || DEFAULT_WF_REPO
 }
 
 export const wfRepoBranch = (): string => {
@@ -15,7 +16,15 @@ export const wfRepoBranch = (): string => {
   if (typeof envWfRepoBranch === 'boolean') {
     return DEFAULT_WF_REPO_BRANCH
   }
-  return envWfRepoBranch ? envWfRepoBranch : DEFAULT_WF_REPO_BRANCH
+  return envWfRepoBranch || DEFAULT_WF_REPO_BRANCH
+}
+
+export const wfRepoGhPagesBranch = (): string => {
+  const envWfRepoGhPagesBranch = import.meta.env.VITE_WF_REPO_GH_PAGES_BRANCH
+  if (typeof envWfRepoGhPagesBranch === 'boolean') {
+    return DEFAULT_WF_REPO_GH_PAGES_BRANCH
+  }
+  return envWfRepoGhPagesBranch || DEFAULT_WF_REPO_GH_PAGES_BRANCH
 }
 
 export const trsEndpoint = (): string => {
@@ -23,5 +32,5 @@ export const trsEndpoint = (): string => {
   if (typeof envTrsEndpoint === 'boolean') {
     return DEFAULT_TRS_ENDPOINT
   }
-  return envTrsEndpoint ? envTrsEndpoint : DEFAULT_TRS_ENDPOINT
+  return envTrsEndpoint || DEFAULT_TRS_ENDPOINT
 }

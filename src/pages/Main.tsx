@@ -4,12 +4,21 @@ import React, { useEffect } from 'react'
 import Hero from '@/components/main/Hero'
 import WfList from '@/components/main/WfList'
 import { useAppDispatch } from '@/store'
-import { fetchWorkflows } from '@/store/workflows'
+import {
+  fetchGhTrsConfigs,
+  fetchModifiedDate,
+  fetchWorkflows,
+} from '@/store/workflows'
 
 const Main: React.VFC = () => {
   const dispatch = useAppDispatch()
   useEffect(() => {
-    ;(async () => dispatch(fetchWorkflows()))()
+    dispatch(fetchWorkflows()).then(() => {
+      Promise.allSettled([
+        dispatch(fetchGhTrsConfigs()),
+        dispatch(fetchModifiedDate()),
+      ])
+    })
   }, [dispatch])
 
   return (
