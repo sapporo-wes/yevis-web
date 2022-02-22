@@ -9,12 +9,17 @@ const SecondaryLink = styled(Link)(({ theme }) => ({
   fontWeight: 'bold',
 }))
 
-const Hero: React.VFC = () => {
+interface Props {
+  sx?: object
+}
+
+const Hero: React.VFC<Props> = (props: Props) => {
   return (
     <Box
       sx={{
         maxWidth: '100vw',
         bgcolor: 'primary.main',
+        ...props.sx,
       }}>
       <Box
         sx={{

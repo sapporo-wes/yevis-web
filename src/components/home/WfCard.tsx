@@ -1,3 +1,4 @@
+import BuildRoundedIcon from '@mui/icons-material/BuildRounded'
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded'
 import {
   Box,
@@ -19,6 +20,7 @@ import {
   extractVersion,
   extractWfType,
   generateAgoStr,
+  isPublished,
   isVerified,
 } from '@/store/getters'
 import { DraftWorkflow, PublishedWorkflow } from '@/store/workflows'
@@ -32,6 +34,7 @@ const WfCard: React.VFC<Props> = (props: Props) => {
   const config = extractConfig(props.wf)
   const wfType = extractWfType(props.wf)
   const verified = isVerified(props.wf)
+  const published = isPublished(props.wf)
   const authors = extractAuthors(props.wf)
   const version = extractVersion(props.wf)
   const agoStr = generateAgoStr(props.wf)
@@ -55,16 +58,22 @@ const WfCard: React.VFC<Props> = (props: Props) => {
                 fontSize: '1.2rem',
                 fontWeight: 'bold',
               }}
-              underline='none'
-              to={`workflows/${config.id}`}>
+              to={`workflows/${config.id}`}
+              underline='none'>
               {config.workflow.name}
             </Link>
             {verified ? (
               <CheckRoundedIcon
-                sx={{ width: '1.4rem', height: '1.4rem' }}
                 color='success'
+                sx={{ width: '1.4rem', height: '1.4rem' }}
               />
             ) : null}
+            {published ? null : (
+              <BuildRoundedIcon
+                color='error'
+                sx={{ width: '1.2rem', height: '1.2rem' }}
+              />
+            )}
           </Stack>
           <Box
             sx={{
@@ -73,18 +82,18 @@ const WfCard: React.VFC<Props> = (props: Props) => {
               flexDirection: 'column',
               flexGrow: 1,
             }}>
-            <Authors sx={{ flexGrow: 1 }} authors={authors} />
+            <Authors authors={authors} sx={{ flexGrow: 1 }} />
             <Stack
               direction='row'
               spacing={2}
               sx={{ alignItems: 'center', mt: 2 }}>
               <Button
                 color='secondary'
-                size='small'
-                variant='outlined'
-                sx={{ textTransform: 'none' }}
                 component={RouterLink}
-                to={`workflows/${config.id}/versions/${version}`}>
+                size='small'
+                sx={{ textTransform: 'none' }}
+                to={`workflows/${config.id}/versions/${version}`}
+                variant='outlined'>
                 Version {version}
               </Button>
               <Typography sx={{ fontSize: '1rem', fontWeight: 'light' }}>

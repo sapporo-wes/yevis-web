@@ -4,18 +4,20 @@ import React from 'react'
 
 interface Props {
   author: string
+  sx?: object
 }
 
 const AuthorChip: React.VFC<Props> = (props: Props) => {
   return (
     <Chip
-      icon={<GitHubIcon />}
-      label={`@${props.author}`}
+      clickable
       color='primary'
-      size='small'
       component='a'
       href={`https://github.com/${props.author}`}
-      clickable
+      icon={<GitHubIcon />}
+      label={`@${props.author}`}
+      size='small'
+      sx={{ ...props.sx }}
       variant='outlined'
     />
   )

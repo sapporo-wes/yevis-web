@@ -2,33 +2,30 @@ import { Autocomplete, TextField } from '@mui/material'
 import React from 'react'
 
 import { RootState, useAppDispatch, useAppSelector } from '@/store'
-import { setWfName } from '@/store/filter'
-import { allWfNames } from '@/store/getters'
+import { setAuthors } from '@/store/filter'
+import { allAuthors } from '@/store/getters'
 
 interface Props {
   sx?: object
 }
 
-const WfNameFilter: React.VFC<Props> = (props: Props) => {
+const AuthorsFilter: React.VFC<Props> = (props: Props) => {
   const rootState = useAppSelector((state: RootState) => state)
   const dispatch = useAppDispatch()
-  const wfNames = allWfNames(rootState)
+  const authors = allAuthors(rootState)
 
   return (
     <Autocomplete
       autoHighlight
-      freeSolo
-      onInputChange={(_, value) => dispatch(setWfName(value))}
-      options={wfNames}
+      multiple
+      onChange={(_, value) => dispatch(setAuthors(value))}
+      options={authors}
       renderInput={(params) => (
         <TextField
           {...params}
           color='secondary'
-          label='Workflow Name'
-          onChange={(event) => {
-            dispatch(setWfName(event.target.value))
-          }}
-          placeholder='Search by name'
+          label='Authors'
+          placeholder='Select author'
         />
       )}
       size='small'
@@ -39,4 +36,4 @@ const WfNameFilter: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default WfNameFilter
+export default AuthorsFilter

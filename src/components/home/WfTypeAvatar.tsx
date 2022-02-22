@@ -10,6 +10,7 @@ import { DescriptorType } from '@/types/trs'
 
 interface Props {
   wfType: DescriptorType | null
+  sx?: object
 }
 
 const wfTypeToSrc = (wfType: DescriptorType): string => {
@@ -29,12 +30,12 @@ const wfTypeToSrc = (wfType: DescriptorType): string => {
 const WfTypeAvatar: React.VFC<Props> = (props: Props) => {
   return props.wfType ? (
     <Avatar
-      variant='square'
       src={wfTypeToSrc(props.wfType)}
-      sx={{ width: '1.4rem', height: '1.4rem' }}
+      sx={{ width: '1.4rem', height: '1.4rem', ...props.sx }}
+      variant='square'
     />
   ) : (
-    <Avatar variant='square' sx={{ width: '1.4rem', height: '1.4rem' }}>
+    <Avatar sx={{ width: '1.4rem', height: '1.4rem' }} variant='square'>
       <QuestionMarkRoundedIcon />
     </Avatar>
   )

@@ -35,12 +35,12 @@ const App: React.VFC = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Routes>
-          <Route index element={<Home />} />
+          <Route element={<Home />} index />
           <Route path='workflows/:id'>
-            <Route index element={<Workflow />} />
-            <Route path='versions/:version' element={<Workflow />} />
+            <Route element={<Workflow />} index />
+            <Route element={<Workflow />} path='versions/:version' />
           </Route>
-          <Route path='*' element={<div>no page</div>} />
+          <Route element={<div>no page</div>} path='*' />
         </Routes>
       </ThemeProvider>
     </Provider>
