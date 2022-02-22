@@ -70,10 +70,10 @@ interface WorkflowsState {
 
 const initialState: WorkflowsState = {
   published: {},
-  publishedLoading: false,
+  publishedLoading: true,
   publishedError: null,
   draft: {},
-  draftLoading: false,
+  draftLoading: true,
   draftError: null,
 }
 

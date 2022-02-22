@@ -5,17 +5,21 @@ import React from 'react'
 
 import { RootState, useAppDispatch, useAppSelector } from '@/store'
 import { setSortBy, SortType } from '@/store/filter'
+import { disableFilter } from '@/store/getters'
 
 interface Props {
   sx?: object
 }
 
 const SortBy: React.VFC<Props> = (props: Props) => {
+  const rootState = useAppSelector((state: RootState) => state)
   const sortBy = useAppSelector((state: RootState) => state.filter.sortBy)
   const dispatch = useAppDispatch()
+  const disable = disableFilter(rootState)
 
   return (
     <ToggleButtonGroup
+      disabled={disable}
       exclusive
       onChange={(_, value) => dispatch(setSortBy(value as SortType))}
       size='small'

@@ -1,7 +1,7 @@
 import { Stack } from '@mui/material'
 import React, { useEffect } from 'react'
 
-import Footer from '@/components/home/Footer'
+import Footer from '@/components/Footer'
 import Hero from '@/components/home/Hero'
 import WfList from '@/components/home/WfList'
 import { useAppDispatch } from '@/store'

@@ -4,7 +4,7 @@ import React from 'react'
 import WfTypeAvatar from '@/components/home/WfTypeAvatar'
 import { RootState, useAppDispatch, useAppSelector } from '@/store'
 import { setWfType, WfType } from '@/store/filter'
-import { wfTypeCounts } from '@/store/getters'
+import { disableFilter, wfTypeCounts } from '@/store/getters'
 
 interface Props {
   sx?: object
@@ -17,9 +17,11 @@ const WfTypeFilter: React.VFC<Props> = (props: Props) => {
   )
   const dispatch = useAppDispatch()
   const counts = wfTypeCounts(rootState)
+  const disable = disableFilter(rootState)
 
   return (
     <ToggleButtonGroup
+      disabled={disable}
       exclusive
       onChange={(_, value) => dispatch(setWfType(value as WfType))}
       size='small'

@@ -278,3 +278,18 @@ export const generateAgoStr = (wf: PublishedWorkflow | DraftWorkflow) => {
   const timeSince = dateToTimeSince(date)
   return `${isPublished(wf) ? 'Published' : 'Created'} ${timeSince}`
 }
+
+export const isLoading = (state: RootState): boolean => {
+  return state.workflows.publishedLoading || state.workflows.draftLoading
+}
+
+export const isError = (state: RootState): boolean => {
+  return (
+    state.workflows.publishedError !== null ||
+    state.workflows.draftError !== null
+  )
+}
+
+export const disableFilter = (state: RootState): boolean => {
+  return isLoading(state) || isError(state)
+}

@@ -5,7 +5,7 @@ import React from 'react'
 
 import { RootState, useAppDispatch, useAppSelector } from '@/store'
 import { PublishStatus, setPublishStatus } from '@/store/filter'
-import { publishStatusCounts } from '@/store/getters'
+import { disableFilter, publishStatusCounts } from '@/store/getters'
 
 interface Props {
   sx?: object
@@ -18,9 +18,11 @@ const PublishStatusFilter: React.VFC<Props> = (props: Props) => {
   )
   const dispatch = useAppDispatch()
   const counts = publishStatusCounts(rootState)
+  const disable = disableFilter(rootState)
 
   return (
     <ToggleButtonGroup
+      disabled={disable}
       exclusive
       onChange={(_, value) =>
         dispatch(setPublishStatus(value as PublishStatus))

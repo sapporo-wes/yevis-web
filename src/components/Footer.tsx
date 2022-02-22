@@ -13,7 +13,7 @@ const Footer: React.VFC = () => {
           color: 'primary.main',
           fontFamily: 'Quicksand',
         }}>
-        © {dayjs().format('YYYY')} - {__APP_NAME__}: {__APP_VERSION__}
+        © {dayjs().format('YYYY')} - {__APP_NAME__} {__APP_VERSION__}
       </Typography>
     </Box>
   )
