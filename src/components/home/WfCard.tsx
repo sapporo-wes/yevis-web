@@ -25,6 +25,7 @@ import { DraftWorkflow, PublishedWorkflow } from '@/store/workflows'
 
 interface Props {
   wf: PublishedWorkflow | DraftWorkflow
+  sx?: object
 }
 
 const WfCard: React.VFC<Props> = (props: Props) => {
@@ -36,13 +37,15 @@ const WfCard: React.VFC<Props> = (props: Props) => {
   const agoStr = generateAgoStr(props.wf)
 
   return (
-    <Card
-      sx={{
-        flexGrow: 1,
-        flexBasis: 0,
-      }}>
-      <CardContent>
-        <Stack spacing={2}>
+    <Card sx={props.sx}>
+      <CardContent sx={{ height: '100%' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            rowGap: 2,
+            height: '100%',
+          }}>
           <Stack direction='row' spacing={2} sx={{ alignItems: 'center' }}>
             <WfTypeAvatar wfType={wfType} />
             <Link
@@ -63,26 +66,33 @@ const WfCard: React.VFC<Props> = (props: Props) => {
               />
             ) : null}
           </Stack>
-          <Box sx={{ px: 2 }}>
-            <Stack spacing={2}>
-              <Authors authors={authors} />
-              <Stack direction='row' spacing={2} sx={{ alignItems: 'center' }}>
-                <Button
-                  color='secondary'
-                  size='small'
-                  variant='outlined'
-                  sx={{ textTransform: 'none' }}
-                  component={RouterLink}
-                  to={`workflows/${config.id}/versions/${version}`}>
-                  Version {version}
-                </Button>
-                <Typography sx={{ fontSize: '1rem', fontWeight: 'light' }}>
-                  {agoStr}
-                </Typography>
-              </Stack>
+          <Box
+            sx={{
+              px: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              flexGrow: 1,
+            }}>
+            <Authors sx={{ flexGrow: 1 }} authors={authors} />
+            <Stack
+              direction='row'
+              spacing={2}
+              sx={{ alignItems: 'center', mt: 2 }}>
+              <Button
+                color='secondary'
+                size='small'
+                variant='outlined'
+                sx={{ textTransform: 'none' }}
+                component={RouterLink}
+                to={`workflows/${config.id}/versions/${version}`}>
+                Version {version}
+              </Button>
+              <Typography sx={{ fontSize: '1rem', fontWeight: 'light' }}>
+                {agoStr}
+              </Typography>
             </Stack>
           </Box>
-        </Stack>
+        </Box>
       </CardContent>
     </Card>
   )

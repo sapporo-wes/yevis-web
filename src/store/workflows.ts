@@ -116,7 +116,6 @@ export const workflowsSlice = createSlice({
     ) => {
       state.publishedLoading = false
       state.publishedError = null
-      console.log(action.payload)
       state.published = action.payload || {}
     },
     [fetchPublishedWorkflows.rejected.type]: (
@@ -137,7 +136,6 @@ export const workflowsSlice = createSlice({
     ) => {
       state.draftLoading = false
       state.draftError = null
-      console.log(action.payload)
       state.draft = action.payload || {}
     },
     [fetchDraftWorkflows.rejected.type]: (

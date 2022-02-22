@@ -77,9 +77,9 @@ export const getGhTrsConfigs = async (
   const results = await Promise.all(
     idVersions.map(([id, version]) => getGhTrsConfig(id, version))
   )
-  for (const config of results) {
+  results.forEach((config) => {
     configs[config.id] = config
-  }
+  })
   return configs
 }
 
@@ -113,9 +113,9 @@ export const getLastModifiedDates = async (
   const results = await Promise.all(
     idVersions.map(([id, version]) => getLastModifiedDate(id, version))
   )
-  for (let i = 0; i < results.length; i++) {
-    dates[idVersions[i][0]] = results[i]
-  }
+  results.forEach((date, i) => {
+    dates[idVersions[i][0]] = date
+  })
   return dates
 }
 
@@ -143,8 +143,7 @@ export const getPublishedWorkflows = async (): Promise<PublishedWorkflows> => {
     getLastModifiedDates(latestIdVersions),
   ])
   const publishedWorkflows: PublishedWorkflows = {}
-  for (let i = 0; i < tools.length; i++) {
-    const tool = tools[i]
+  tools.forEach((tool, i) => {
     publishedWorkflows[tool.id] = {
       tool,
       latest: {
@@ -154,7 +153,7 @@ export const getPublishedWorkflows = async (): Promise<PublishedWorkflows> => {
         modifiedDate: modifiedDate[tool.id],
       },
     }
-  }
+  })
   return publishedWorkflows
 }
 
@@ -230,8 +229,7 @@ export const getDraftWorkflows = async (): Promise<DraftWorkflows> => {
     res.status === 'fulfilled' ? res.value : null
   )
   const draftWorkflows: DraftWorkflows = {}
-  for (let i = 0; i < prIdDates.length; i++) {
-    const idDate = prIdDates[i]
+  prIdDates.forEach((idDate, i) => {
     const config = configs[i]
     if (config !== null) {
       draftWorkflows[config.id] = {
@@ -241,6 +239,6 @@ export const getDraftWorkflows = async (): Promise<DraftWorkflows> => {
         prId: idDate[0],
       }
     }
-  }
+  })
   return draftWorkflows
 }

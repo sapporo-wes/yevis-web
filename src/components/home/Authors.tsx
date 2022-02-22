@@ -5,14 +5,20 @@ import AuthorChip from '@/components/home/AuthorChip'
 
 interface Props {
   authors: string[]
+  sx?: object
 }
 
 const Authors: React.VFC<Props> = (props: Props) => {
   return props.authors.length ? (
-    <Box sx={{ display: 'flex', flexDirection: 'raw' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'raw', ...props.sx }}>
       <Box>
         <Typography
-          sx={{ fontWeight: 'light', fontSize: '0.8rem', pt: '0.1rem', pr: 1 }}>
+          sx={{
+            fontWeight: 'light',
+            fontSize: '0.8rem',
+            pt: '0.1rem',
+            pr: 1,
+          }}>
           By:
         </Typography>
       </Box>

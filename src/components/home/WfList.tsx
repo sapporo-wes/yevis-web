@@ -1,4 +1,4 @@
-import { Box, Stack } from '@mui/material'
+import { Box, Stack, Theme } from '@mui/material'
 import React from 'react'
 
 import WfCard from '@/components/home/WfCard'
@@ -25,14 +25,26 @@ const WfList: React.VFC = () => {
           <Stack direction='row'>
             <WfNameFilter />
           </Stack>
-          <Stack spacing={2}>
-            {[...Array(Math.ceil(wfs.length / 2)).keys()].map((rowInd) => (
-              <Stack key={rowInd} direction='row' spacing={2}>
-                {wfs[rowInd * 2] && <WfCard wf={wfs[rowInd * 2]} />}
-                {wfs[rowInd * 2 + 1] && <WfCard wf={wfs[rowInd * 2 + 1]} />}
-              </Stack>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              rowGap: 2,
+              columnGap: 2,
+              justifyContent: 'stretch',
+            }}>
+            {wfs.map((wf, i) => (
+              <WfCard
+                sx={{
+                  width: (theme: Theme) => `calc(50% - ${theme.spacing(1)})`,
+                  // height: '3',
+                }}
+                key={i}
+                wf={wf}
+              />
             ))}
-          </Stack>
+          </Box>
         </Stack>
       </Box>
     </Box>
