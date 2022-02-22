@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
 
-import AuthorChip from '@/components/main/AuthorChip'
+import AuthorChip from '@/components/home/AuthorChip'
 
 interface Props {
   authors: string[]

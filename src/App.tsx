@@ -4,7 +4,7 @@ import React from 'react'
 import { Provider } from 'react-redux'
 import { Route, Routes } from 'react-router-dom'
 
-import Main from '@/pages/Main'
+import Home from '@/pages/Home'
 import Workflow from '@/pages/Workflow'
 import store from '@/store'
 
@@ -35,7 +35,7 @@ const App: React.VFC = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Routes>
-          <Route index element={<Main />} />
+          <Route index element={<Home />} />
           <Route path='workflows/:id'>
             <Route index element={<Workflow />} />
             <Route path='versions/:version' element={<Workflow />} />

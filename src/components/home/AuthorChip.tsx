@@ -3,7 +3,7 @@ import { Chip } from '@mui/material'
 import React from 'react'
 
 interface Props {
-  author: string // like suecharo (github account)
+  author: string
 }
 
 const AuthorChip: React.VFC<Props> = (props: Props) => {

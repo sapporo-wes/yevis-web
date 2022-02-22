@@ -15,6 +15,7 @@
     "@octokit/request": "^5.6.3",
     "@reduxjs/toolkit": "^1.7.2",
     "dayjs": "^1.10.7",
+    "js-yaml": "^4.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.6",
@@ -22,6 +23,7 @@
     "semver": "^6.3.0"
   },
   "devDependencies": {
+    "@types/js-yaml": "^4.0.5",
     "@types/node": "^17.0.18",
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.10",

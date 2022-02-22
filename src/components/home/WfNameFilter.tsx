@@ -3,11 +3,11 @@ import React from 'react'
 
 import { RootState, useAppDispatch, useAppSelector } from '@/store'
 import { setWfName } from '@/store/filter'
-import { getWfNames } from '@/store/workflows'
+import { allWfNames } from '@/store/getters'
 
 const WfNameFilter: React.VFC = () => {
-  const wfsState = useAppSelector((state: RootState) => state.workflows)
-  const wfNames = getWfNames(wfsState)
+  const rootState = useAppSelector((state: RootState) => state)
+  const wfNames = allWfNames(rootState)
   const dispatch = useAppDispatch()
 
   return (

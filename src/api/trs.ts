@@ -1,8 +1,11 @@
 import { request } from 'https://cdn.skypack.dev/@octokit/request'
+import yaml from 'js-yaml'
+import semver from 'semver'
 
 import { trsEndpoint, wfRepo, wfRepoGhPagesBranch } from '@/envDefault'
+import { DraftWorkflows, PublishedWorkflows } from '@/store/workflows'
 import { Config } from '@/types/ghTrs'
-import { ServiceInfo, Tool } from '@/types/trs'
+import { ServiceInfo, Tool, ToolVersion } from '@/types/trs'
 
 export const getServiceInfo = async (): Promise<ServiceInfo> => {
   const res = await fetch(`${trsEndpoint().replace(/\/$/, '')}/service-info`, {
@@ -66,18 +69,17 @@ export const getGhTrsConfig = async (
   return await res.json()
 }
 
+// { id: Config }
 export const getGhTrsConfigs = async (
   idVersions: [string, string][]
 ): Promise<Record<string, Config>> => {
   const configs: Record<string, Config> = {} // key: ${id}_${version}
-  const queue = idVersions.map(([id, version]) => getGhTrsConfig(id, version))
-  await Promise.allSettled(queue).then((results) => {
-    results.forEach((result) => {
-      if (result.status === 'fulfilled') {
-        configs[`${result.value.id}_${result.value.version}`] = result.value
-      }
-    })
-  })
+  const results = await Promise.all(
+    idVersions.map(([id, version]) => getGhTrsConfig(id, version))
+  )
+  for (const config of results) {
+    configs[config.id] = config
+  }
   return configs
 }
 
@@ -85,8 +87,7 @@ export const getGhTrsConfigs = async (
 export const getLastModifiedDate = async (
   id: string,
   version: string
-): Promise<[string, string, string]> => {
-  // const octokit = new Octokit()
+): Promise<string> => {
   const commits = await request('GET /repos/{owner}/{repo}/commits', {
     owner: wfRepo().split('/')[0],
     repo: wfRepo().split('/')[1],
@@ -101,22 +102,145 @@ export const getLastModifiedDate = async (
   if (date === null) {
     throw new Error(`Failed to get last modified date of ${id}_${version}`)
   }
-  return [id, version, date]
+  return date
 }
 
+// { id: date }
 export const getLastModifiedDates = async (
   idVersions: [string, string][]
 ): Promise<Record<string, string>> => {
   const dates: Record<string, string> = {} // key: ${id}_${version}
-  const queue = idVersions.map(([id, version]) =>
-    getLastModifiedDate(id, version)
+  const results = await Promise.all(
+    idVersions.map(([id, version]) => getLastModifiedDate(id, version))
   )
-  await Promise.allSettled(queue).then((results) => {
-    results.forEach((result) => {
-      if (result.status === 'fulfilled') {
-        dates[`${result.value[0]}_${result.value[1]}`] = result.value[2]
-      }
-    })
-  })
+  for (let i = 0; i < results.length; i++) {
+    dates[idVersions[i][0]] = results[i]
+  }
   return dates
+}
+
+export const latestVersion = (tool: Tool): ToolVersion => {
+  return tool.versions.sort((a, b) => {
+    const aVer = a.url.split('/').pop() || '0.0.0'
+    const bVer = b.url.split('/').pop() || '0.0.0'
+    return semver.compare(aVer, bVer)
+  })[0]
+}
+
+export const extractVersion = (toolVersion: ToolVersion): string => {
+  return toolVersion.url.split('/').pop() || ''
+}
+
+export const getPublishedWorkflows = async (): Promise<PublishedWorkflows> => {
+  await isGhTrs()
+  const tools = await getTools()
+  const latestToolVersions = tools.map((tool) => latestVersion(tool))
+  const latestIdVersions: [string, string][] = latestToolVersions.map(
+    (toolVersion) => [toolVersion.id, extractVersion(toolVersion)]
+  )
+  const [configs, modifiedDate] = await Promise.all([
+    getGhTrsConfigs(latestIdVersions),
+    getLastModifiedDates(latestIdVersions),
+  ])
+  const publishedWorkflows: PublishedWorkflows = {}
+  for (let i = 0; i < tools.length; i++) {
+    const tool = tools[i]
+    publishedWorkflows[tool.id] = {
+      tool,
+      latest: {
+        toolVersion: latestToolVersions[i],
+        config: configs[tool.id],
+        version: latestIdVersions[i][1],
+        modifiedDate: modifiedDate[tool.id],
+      },
+    }
+  }
+  return publishedWorkflows
+}
+
+// https://docs.github.com/ja/rest/reference/pulls#list-pull-requests
+// return [prId, createdAt][]
+export const getPullRequestIdDates = async (): Promise<[number, string][]> => {
+  const pullRequests = await request('GET /repos/{owner}/{repo}/pulls', {
+    owner: wfRepo().split('/')[0],
+    repo: wfRepo().split('/')[1],
+    state: 'open',
+  })
+  return pullRequests.data
+    .filter((pr) => pr.title.includes('Add'))
+    .map((pr) => [pr.number, pr.created_at])
+}
+
+// https://docs.github.com/ja/rest/reference/pulls#list-pull-requests-files
+// return example: https://github.com/ddbj/yevis-workflows-dev/raw/68b0c0d92505c93a37d4b4d7180136d785f631bb/1fdc5861-c146-40f5-bb76-bcb5955cee11/yevis-config-1.0.0.yml
+export const getDraftConfigUrl = async (prId: number): Promise<string> => {
+  const files = await request(
+    'GET /repos/{owner}/{repo}/pulls/{pull_number}/files',
+    {
+      owner: wfRepo().split('/')[0],
+      repo: wfRepo().split('/')[1],
+      pull_number: prId,
+    }
+  )
+  const configFile = files.data.find((file) =>
+    file.filename.includes('yevis-config')
+  )
+  if (typeof configFile === 'undefined') {
+    throw new Error(`Failed to get draft config url of ${prId}`)
+  }
+  return configFile.raw_url
+}
+
+// url example: https://github.com/ddbj/yevis-workflows-dev/raw/68b0c0d92505c93a37d4b4d7180136d785f631bb/1fdc5861-c146-40f5-bb76-bcb5955cee11/yevis-config-1.0.0.yml
+// rawUrl example: https://raw.githubusercontent.com/ddbj/yevis-workflows-dev/68b0c0d92505c93a37d4b4d7180136d785f631bb/1fdc5861-c146-40f5-bb76-bcb5955cee11/yevis-config-1.0.0.yml
+export const getConfigFromRawUrl = async (
+  url: string | null
+): Promise<Config> => {
+  if (url === null) {
+    throw new Error('Failed to get config from raw url because url is null')
+  }
+  const rawUrl = url
+    .replace('github.com', 'raw.githubusercontent.com')
+    .replace('/raw/', '/')
+  const res = await fetch(rawUrl, {
+    method: 'GET',
+  })
+  if (!res.ok) {
+    throw new Error(
+      `Failed to get config from ${url} with error: ${res.status} ${res.statusText}`
+    )
+  }
+  const config = yaml.load(await res.text()) as Config
+  return config
+}
+
+export const getDraftWorkflows = async (): Promise<DraftWorkflows> => {
+  await isGhTrs()
+  const prIdDates = await getPullRequestIdDates()
+  const configUrlResults = await Promise.allSettled(
+    prIdDates.map((idDate) => getDraftConfigUrl(idDate[0]))
+  )
+  const configUrls = configUrlResults.map((res) =>
+    res.status === 'fulfilled' ? res.value : null
+  )
+  const configResults = await Promise.allSettled(
+    configUrls.map((url) => getConfigFromRawUrl(url))
+  )
+  const configs = configResults.map((res) =>
+    res.status === 'fulfilled' ? res.value : null
+  )
+  const draftWorkflows: DraftWorkflows = {}
+  for (let i = 0; i < prIdDates.length; i++) {
+    const idDate = prIdDates[i]
+    const config = configs[i]
+    if (config !== null) {
+      draftWorkflows[config.id] = {
+        config,
+        version: config.version,
+        createdDate: idDate[1],
+        prId: idDate[0],
+      }
+    }
+  }
+  return draftWorkflows
 }

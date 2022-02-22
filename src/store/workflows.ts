@@ -1,74 +1,100 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import semver from 'semver'
 
-import {
-  getGhTrsConfigs,
-  getLastModifiedDates,
-  getTools,
-  isGhTrs,
-} from '@/api/trs'
-import { RootState } from '@/store'
+import { getDraftWorkflows, getPublishedWorkflows } from '@/api/trs'
 import { Config } from '@/types/ghTrs'
 import { Tool, ToolVersion } from '@/types/trs'
 
+export interface PublishedWorkflow {
+  tool: Tool
+  latest: {
+    toolVersion: ToolVersion
+    config: Config
+    version: string
+    modifiedDate: string
+  }
+}
+
+export const isPublishedWorkflow = (
+  wf: PublishedWorkflow | DraftWorkflow
+): wf is PublishedWorkflow => {
+  return (wf as PublishedWorkflow).tool !== undefined
+}
+
+export interface PublishedWorkflows {
+  [id: string]: PublishedWorkflow
+}
+
+export interface DraftWorkflow {
+  config: Config
+  version: string
+  createdDate: string
+  prId: number
+}
+
+export const isDraftWorkflow = (
+  wf: PublishedWorkflow | DraftWorkflow
+): wf is DraftWorkflow => {
+  return (wf as DraftWorkflow).config !== undefined
+}
+
+export interface DraftWorkflows {
+  [id: string]: DraftWorkflow
+}
+
 interface WorkflowsState {
-  workflows: Tool[]
-  workflowsLoading: boolean
-  workflowsError: string | null
-  ghTrsConfigs: Record<string, Config> // key: ${id}_${version}
-  ghTrsConfigsLoading: boolean
-  ghTrsConfigsError: string | null
-  modifiedDates: Record<string, string> // key: ${id}_${version}
+  published: {
+    [id: string]: {
+      tool: Tool
+      latest: {
+        toolVersion: ToolVersion
+        config: Config
+        version: string
+        modifiedDate: string
+      }
+    }
+  }
+  publishedLoading: boolean
+  publishedError: string | null
+  draft: {
+    [id: string]: {
+      config: Config
+      configUrl: string
+      version: string
+      createdDate: string
+      prId: number
+    }
+  }
+  draftLoading: boolean
+  draftError: string | null
 }
 
 const initialState: WorkflowsState = {
-  workflows: [],
-  workflowsLoading: true,
-  workflowsError: null,
-  ghTrsConfigs: {},
-  ghTrsConfigsLoading: true,
-  ghTrsConfigsError: null,
-  modifiedDates: {},
+  published: {},
+  publishedLoading: false,
+  publishedError: null,
+  draft: {},
+  draftLoading: false,
+  draftError: null,
 }
 
-export const fetchWorkflows = createAsyncThunk(
-  'workflows/fetchWorkflows',
+export const fetchPublishedWorkflows = createAsyncThunk(
+  'workflows/fetchPublishedWorkflows',
   async (_, { rejectWithValue }) => {
     try {
-      await isGhTrs()
-      return await getTools()
+      const wfs = await getPublishedWorkflows()
+      return wfs
     } catch (err) {
       return rejectWithValue((err as Error).message)
     }
   }
 )
 
-export const fetchGhTrsConfigs = createAsyncThunk(
-  'workflows/fetchGhTrsConfigs',
-  async (_, { rejectWithValue, getState }) => {
-    const state = getState() as RootState
-    const wfIdVersions: [string, string][] = state.workflows.workflows.map(
-      (wf) => [wf.id, extractVersion(latestWfVersion(wf)).raw]
-    )
+export const fetchDraftWorkflows = createAsyncThunk(
+  'workflows/fetchDraftWorkflows',
+  async (_, { rejectWithValue }) => {
     try {
-      await isGhTrs()
-      return await getGhTrsConfigs(wfIdVersions)
-    } catch (err) {
-      return rejectWithValue((err as Error).message)
-    }
-  }
-)
-
-export const fetchModifiedDate = createAsyncThunk(
-  'workflows/fetchModifiedDate',
-  async (_, { rejectWithValue, getState }) => {
-    const state = getState() as RootState
-    const wfIdVersions: [string, string][] = state.workflows.workflows.map(
-      (wf) => [wf.id, extractVersion(latestWfVersion(wf)).raw]
-    )
-    try {
-      await isGhTrs()
-      return await getLastModifiedDates(wfIdVersions)
+      const wfs = await getDraftWorkflows()
+      return wfs
     } catch (err) {
       return rejectWithValue((err as Error).message)
     }
@@ -80,70 +106,48 @@ export const workflowsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
-    [fetchWorkflows.pending.type]: (state) => {
-      state.workflowsLoading = true
+    [fetchPublishedWorkflows.pending.type]: (state) => {
+      state.publishedLoading = true
+      state.publishedError = null
     },
-    [fetchWorkflows.fulfilled.type]: (
+    [fetchPublishedWorkflows.fulfilled.type]: (
       state,
-      action: PayloadAction<WorkflowsState['workflows']>
+      action: PayloadAction<WorkflowsState['published']>
     ) => {
-      state.workflowsLoading = false
-      state.workflows = action.payload
+      state.publishedLoading = false
+      state.publishedError = null
+      console.log(action.payload)
+      state.published = action.payload || {}
     },
-    [fetchWorkflows.rejected.type]: (state, action: PayloadAction<string>) => {
-      state.workflowsLoading = false
-      state.workflowsError = action.payload
+    [fetchPublishedWorkflows.rejected.type]: (
+      state,
+      action: PayloadAction<WorkflowsState['publishedError']>
+    ) => {
+      state.publishedLoading = false
+      state.publishedError = action.payload
     },
 
-    [fetchGhTrsConfigs.pending.type]: (state) => {
-      state.ghTrsConfigsLoading = true
+    [fetchDraftWorkflows.pending.type]: (state) => {
+      state.draftLoading = true
+      state.draftError = null
     },
-    [fetchGhTrsConfigs.fulfilled.type]: (
+    [fetchDraftWorkflows.fulfilled.type]: (
       state,
-      action: PayloadAction<WorkflowsState['ghTrsConfigs']>
+      action: PayloadAction<WorkflowsState['draft']>
     ) => {
-      state.ghTrsConfigsLoading = false
-      state.ghTrsConfigs = action.payload
+      state.draftLoading = false
+      state.draftError = null
+      console.log(action.payload)
+      state.draft = action.payload || {}
     },
-    [fetchGhTrsConfigs.rejected.type]: (
+    [fetchDraftWorkflows.rejected.type]: (
       state,
-      action: PayloadAction<string>
+      action: PayloadAction<WorkflowsState['draftError']>
     ) => {
-      state.ghTrsConfigsLoading = false
-      state.ghTrsConfigsError = action.payload
-    },
-
-    [fetchModifiedDate.fulfilled.type]: (
-      state,
-      action: PayloadAction<WorkflowsState['modifiedDates']>
-    ) => {
-      state.modifiedDates = action.payload
+      state.draftLoading = false
+      state.draftError = action.payload
     },
   },
 })
 
 export default workflowsSlice.reducer
-
-export const getWfNames = (state: WorkflowsState) =>
-  state.workflows.map((wf) => wf.name)
-
-export const extractVersion = (wfVersion: ToolVersion): semver.SemVer => {
-  return (
-    semver.parse(wfVersion.url.split('/').pop() || '0.0.0') ||
-    new semver.SemVer('0.0.0')
-  )
-}
-
-export const latestWfVersion = (wf: Tool): ToolVersion => {
-  const toolVersions = wf.versions
-  return toolVersions.reduce(
-    (prev, current) =>
-      extractVersion(prev) > extractVersion(current) ? prev : current,
-    toolVersions[0]
-  )
-}
-
-export const wfToKey = (wf: Tool): string => {
-  const latestVersion = latestWfVersion(wf)
-  return `${wf.id}_${extractVersion(latestVersion).raw}`
-}
