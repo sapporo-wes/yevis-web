@@ -53,8 +53,9 @@ const WfList: React.VFC<Props> = (props: Props) => {
             /> */}
             <PublishStatusFilter
               sx={{
-                maxWidth: '260px',
+                // maxWidth: '260px',
                 minWidth: '260px',
+                flexGrow: 1,
               }}
             />
             <WfTypeFilter

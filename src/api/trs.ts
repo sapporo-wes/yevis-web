@@ -120,11 +120,12 @@ export const getLastModifiedDates = async (
 }
 
 export const latestVersion = (tool: Tool): ToolVersion => {
-  return tool.versions.sort((a, b) => {
+  const sortedTools = tool.versions.sort((a, b) => {
     const aVer = a.url.split('/').pop() || '0.0.0'
     const bVer = b.url.split('/').pop() || '0.0.0'
     return semver.compare(aVer, bVer)
-  })[0]
+  })
+  return sortedTools[sortedTools.length - 1]
 }
 
 export const extractVersion = (toolVersion: ToolVersion): string => {

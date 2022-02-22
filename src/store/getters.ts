@@ -159,6 +159,16 @@ export const extractDate = (wf: PublishedWorkflow | DraftWorkflow): string => {
   }
 }
 
+export const extractConceptDoi = (
+  wf: PublishedWorkflow | DraftWorkflow
+): string | null => {
+  if (isPublishedWorkflow(wf)) {
+    return wf.latest.config.zenodo?.concept_doi || null
+  } else {
+    return wf.config.zenodo?.concept_doi || null
+  }
+}
+
 export const isVerified = (wf: PublishedWorkflow | DraftWorkflow): boolean => {
   if (isPublishedWorkflow(wf)) {
     return wf.latest.toolVersion.verified || false

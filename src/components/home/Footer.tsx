@@ -4,7 +4,7 @@ import React from 'react'
 
 const Footer: React.VFC = () => {
   return (
-    <Box component='footer' sx={{ pb: 2 }}>
+    <Box component='footer' sx={{ pb: 2, height: '35px' }}>
       <Typography
         align='center'
         sx={{

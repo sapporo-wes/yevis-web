@@ -19,7 +19,7 @@ const Authors: React.VFC<Props> = (props: Props) => {
             pt: '0.1rem',
             pr: 1,
           }}>
-          By:
+          By
         </Typography>
       </Box>
       <Box

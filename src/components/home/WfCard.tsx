@@ -1,6 +1,7 @@
 import BuildRoundedIcon from '@mui/icons-material/BuildRounded'
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded'
 import {
+  Avatar,
   Box,
   Button,
   Card,
@@ -12,10 +13,12 @@ import {
 import React from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 
+import doiLogo from '@/assets/doi-logo.svg'
 import Authors from '@/components/home/Authors'
 import WfTypeAvatar from '@/components/home/WfTypeAvatar'
 import {
   extractAuthors,
+  extractConceptDoi,
   extractConfig,
   extractVersion,
   extractWfType,
@@ -38,6 +41,7 @@ const WfCard: React.VFC<Props> = (props: Props) => {
   const authors = extractAuthors(props.wf)
   const version = extractVersion(props.wf)
   const agoStr = generateAgoStr(props.wf)
+  const doi = extractConceptDoi(props.wf)
 
   return (
     <Card sx={props.sx}>
@@ -86,6 +90,27 @@ const WfCard: React.VFC<Props> = (props: Props) => {
               flexGrow: 1,
             }}>
             <Authors authors={authors} sx={{ flexGrow: 1 }} />
+            {doi ? (
+              <Stack
+                direction='row'
+                spacing={1}
+                sx={{ mt: 2, alignItems: 'center' }}>
+                <Avatar
+                  src={doiLogo}
+                  sx={{ width: '1.2rem', height: '1.2rem' }}
+                  variant='square'
+                />
+                <Link
+                  href={`https://doi.org/${doi}`}
+                  sx={{
+                    color: 'primary.main',
+                    fontSize: '0.8rem',
+                    textDecoration: 'none',
+                  }}>
+                  {doi}
+                </Link>
+              </Stack>
+            ) : null}
             <Stack
               direction='row'
               spacing={2}

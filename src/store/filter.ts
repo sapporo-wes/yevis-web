@@ -52,8 +52,16 @@ export const filterSlice = createSlice({
       }
     },
 
-    setSortBy: (state, action: PayloadAction<SortType>) => {
-      state.sortBy = action.payload
+    setSortBy: (state, action: PayloadAction<SortType | null>) => {
+      if (action.payload === null) {
+        if (state.sortBy === 'date') {
+          state.sortBy = 'name'
+        } else {
+          state.sortBy = 'date'
+        }
+      } else {
+        state.sortBy = action.payload
+      }
     },
   },
 })
