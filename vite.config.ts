@@ -15,4 +15,8 @@ export default defineConfig({
       '@/': path.join(__dirname, './src/'),
     },
   },
+  define: {
+    __APP_NAME__: JSON.stringify(process.env.APP_NAME || 'yevis-web'),
+    __APP_VERSION__: JSON.stringify(process.env.APP_VERSION || '1.0.0'),
+  },
 })

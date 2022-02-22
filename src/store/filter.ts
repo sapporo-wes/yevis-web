@@ -1,11 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
+export type PublishStatus = 'published' | 'draft'
+export type WfType = 'CWL' | 'WDL' | 'NFL' | 'SMK'
+export type SortType = 'name' | 'date'
+
 export interface FilterState {
   wfName: string
   authors: string[]
-  publishStatus: ('published' | 'draft')[]
-  wfType: ('CWL' | 'WDL' | 'NFL' | 'SMK')[]
-  sortBy: 'date' | 'name'
+  publishStatus: PublishStatus[]
+  wfType: WfType[]
+  sortBy: SortType
 }
 
 const initialState: FilterState = {
@@ -28,18 +32,27 @@ export const filterSlice = createSlice({
       state.authors = action.payload
     },
 
-    setPublishStatus: (
-      state,
-      action: PayloadAction<FilterState['publishStatus']>
-    ) => {
-      state.publishStatus = action.payload
+    // multiple
+    setPublishStatus: (state, action: PayloadAction<PublishStatus>) => {
+      if (state.publishStatus.includes(action.payload)) {
+        state.publishStatus = state.publishStatus.filter(
+          (s) => s !== action.payload
+        )
+      } else {
+        state.publishStatus.push(action.payload)
+      }
     },
 
-    setWfType: (state, action: PayloadAction<FilterState['wfType']>) => {
-      state.wfType = action.payload
+    // multiple
+    setWfType: (state, action: PayloadAction<WfType>) => {
+      if (state.wfType.includes(action.payload)) {
+        state.wfType = state.wfType.filter((t) => t !== action.payload)
+      } else {
+        state.wfType.push(action.payload)
+      }
     },
 
-    setSortBy: (state, action: PayloadAction<FilterState['sortBy']>) => {
+    setSortBy: (state, action: PayloadAction<SortType>) => {
       state.sortBy = action.payload
     },
   },

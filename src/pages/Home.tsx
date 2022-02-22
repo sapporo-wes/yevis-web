@@ -1,6 +1,7 @@
 import { Stack } from '@mui/material'
 import React, { useEffect } from 'react'
 
+import Footer from '@/components/home/Footer'
 import Hero from '@/components/home/Hero'
 import WfList from '@/components/home/WfList'
 import { useAppDispatch } from '@/store'
@@ -16,10 +17,15 @@ const Home: React.VFC = () => {
   }, [dispatch])
 
   return (
-    <Stack spacing={4}>
-      <Hero />
-      <WfList />
-    </Stack>
+    <React.Fragment>
+      <main>
+        <Stack spacing={4} sx={{ mb: 8 }}>
+          <Hero />
+          <WfList />
+        </Stack>
+      </main>
+      <Footer />
+    </React.Fragment>
   )
 }
 

@@ -50,7 +50,10 @@ const WfCard: React.VFC<Props> = (props: Props) => {
             height: '100%',
           }}>
           <Stack direction='row' spacing={2} sx={{ alignItems: 'center' }}>
-            <WfTypeAvatar wfType={wfType} />
+            <WfTypeAvatar
+              sx={{ width: '1.4rem', height: '1.4rem' }}
+              wfType={wfType}
+            />
             <Link
               component={RouterLink}
               sx={{

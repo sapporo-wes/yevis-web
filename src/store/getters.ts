@@ -189,9 +189,9 @@ export const compareDate = (
   const aDate = dayjs(extractDate(a))
   const bDate = dayjs(extractDate(b))
   if (aDate.isBefore(bDate)) {
-    return -1
-  } else if (aDate.isAfter(bDate)) {
     return 1
+  } else if (aDate.isAfter(bDate)) {
+    return -1
   } else {
     return 0
   }
@@ -204,7 +204,6 @@ export const filteredWfs = (
   const { published, draft } = state.workflows
   const wfs: (PublishedWorkflow | DraftWorkflow)[] = []
   const allIds = new Set([...Object.keys(published), ...Object.keys(draft)])
-  console.log(wfName)
   for (const id of allIds) {
     const wf = state.workflows.published[id] || state.workflows.draft[id]
     if (
