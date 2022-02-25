@@ -67,7 +67,7 @@ const Workflow: React.VFC = () => {
   return (
     <React.Fragment>
       <main>
-        <Stack spacing={4} sx={{ minHeight: 'calc(100vh - 35px)', mb: 4 }}>
+        <Stack spacing={4} sx={{ minHeight: 'calc(100vh - 35px)', pb: 4 }}>
           {loading ? (
             <LoadingMessage />
           ) : error ? (
