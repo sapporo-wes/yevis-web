@@ -19,7 +19,7 @@ const Home: React.VFC = () => {
   return (
     <React.Fragment>
       <main>
-        <Stack spacing={4} sx={{ mb: 8, minHeight: 'calc(100vh - 35px)' }}>
+        <Stack spacing={4} sx={{ minHeight: 'calc(100vh - 35px)', mb: 4 }}>
           <Hero />
           <WfList />
         </Stack>

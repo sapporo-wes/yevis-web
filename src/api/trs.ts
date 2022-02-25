@@ -3,7 +3,12 @@ import yaml from 'js-yaml'
 import semver from 'semver'
 
 import { trsEndpoint, wfRepo, wfRepoGhPagesBranch } from '@/envDefault'
-import { DraftWorkflows, PublishedWorkflows } from '@/store/workflows'
+import {
+  DraftWorkflow,
+  DraftWorkflows,
+  PublishedWorkflow,
+  PublishedWorkflows,
+} from '@/store/workflows'
 import { Config } from '@/types/ghTrs'
 import { ServiceInfo, Tool, ToolVersion } from '@/types/trs'
 
@@ -13,7 +18,10 @@ export const getServiceInfo = async (): Promise<ServiceInfo> => {
   })
   if (!res.ok) {
     throw new Error(
-      `Failed to fetch /service-info with error: ${res.status} ${res.statusText}`
+      `Failed to get ${trsEndpoint().replace(
+        /\/$/,
+        ''
+      )}/service-info with error: ${res.status} ${res.statusText}`
     )
   }
   return await res.json()
@@ -42,7 +50,50 @@ export const getTools = async (): Promise<Tool[]> => {
   })
   if (!res.ok) {
     throw new Error(
-      `Failed to fetch /tools with error: ${res.status} ${res.statusText}`
+      `Failed to get ${trsEndpoint().replace(/\/$/, '')}/tools with error: ${
+        res.status
+      } ${res.statusText}`
+    )
+  }
+  return await res.json()
+}
+
+export const getTool = async (toolId: string): Promise<Tool> => {
+  const res = await fetch(
+    `${trsEndpoint().replace(/\/$/, '')}/tools/${toolId}`,
+    {
+      method: 'GET',
+    }
+  )
+  if (!res.ok) {
+    throw new Error(
+      `Failed to get ${trsEndpoint().replace(
+        /\/$/,
+        ''
+      )}/tools/${toolId} with error: ${res.status} ${res.statusText}`
+    )
+  }
+  return await res.json()
+}
+
+export const getToolVersion = async (
+  toolId: string,
+  version: string
+): Promise<ToolVersion> => {
+  const res = await fetch(
+    `${trsEndpoint().replace(/\/$/, '')}/tools/${toolId}/versions/${version}`,
+    {
+      method: 'GET',
+    }
+  )
+  if (!res.ok) {
+    throw new Error(
+      `Failed to get ${trsEndpoint().replace(
+        /\/$/,
+        ''
+      )}/tools/${toolId}/versions/${version} with error: ${res.status} ${
+        res.statusText
+      }`
     )
   }
   return await res.json()
@@ -63,7 +114,12 @@ export const getGhTrsConfig = async (
   )
   if (!res.ok) {
     throw new Error(
-      `Failed to fetch /tools/${id}/versions/${version}/gh-trs-config.json with error: ${res.status} ${res.statusText}`
+      `Failed to get ${trsEndpoint().replace(
+        /\/$/,
+        ''
+      )}/tools/${id}/versions/${version}/gh-trs-config.json with error: ${
+        res.status
+      } ${res.statusText}`
     )
   }
   return await res.json()
@@ -147,15 +203,38 @@ export const getPublishedWorkflows = async (): Promise<PublishedWorkflows> => {
   tools.forEach((tool, i) => {
     publishedWorkflows[tool.id] = {
       tool,
-      latest: {
-        toolVersion: latestToolVersions[i],
-        config: configs[tool.id],
-        version: latestIdVersions[i][1],
-        modifiedDate: modifiedDate[tool.id],
-      },
+      version: latestIdVersions[i][1],
+      toolVersion: latestToolVersions[i],
+      config: configs[tool.id],
+      modifiedDate: modifiedDate[tool.id],
     }
   })
   return publishedWorkflows
+}
+
+export const getPublishedWorkflow = async (
+  id: string,
+  version?: string
+): Promise<PublishedWorkflow> => {
+  await isGhTrs()
+  const tool = await getTool(id)
+  const [toolVersion, ver] = await (async () => {
+    if (typeof version === 'undefined') {
+      const toolVersion = latestVersion(tool)
+      return [toolVersion, extractVersion(toolVersion)]
+    } else {
+      return [await getToolVersion(id, version), version]
+    }
+  })()
+  const config = await getGhTrsConfig(id, ver)
+  const modifiedDate = await getLastModifiedDate(id, ver)
+  return {
+    tool,
+    version: ver,
+    toolVersion,
+    config,
+    modifiedDate,
+  }
 }
 
 // https://docs.github.com/ja/rest/reference/pulls#list-pull-requests
@@ -242,4 +321,51 @@ export const getDraftWorkflows = async (): Promise<DraftWorkflows> => {
     }
   })
   return draftWorkflows
+}
+
+export const getDraftWorkflow = async (
+  id: string,
+  version?: string
+): Promise<DraftWorkflow> => {
+  await isGhTrs()
+  const prIdDates = await getPullRequestIdDates()
+  for (const [prId, date] of prIdDates) {
+    /// https://github.com/ddbj/yevis-workflows-dev/raw/68b0c0d92505c93a37d4b4d7180136d785f631bb/1fdc5861-c146-40f5-bb76-bcb5955cee11/yevis-config-1.0.0.yml
+    const url = await getDraftConfigUrl(prId).catch(() => null)
+    if (url === null) {
+      continue
+    }
+    if (url.includes(id.toString())) {
+      if (typeof version === 'undefined') {
+        const config = await getConfigFromRawUrl(url).catch(() => null)
+        if (config === null) {
+          continue
+        }
+        if (config.id === id) {
+          return {
+            config,
+            version: config.version,
+            createdDate: date,
+            prId,
+          }
+        }
+      } else {
+        if (url.includes(`yevis-config-${version}.yml`)) {
+          const config = await getConfigFromRawUrl(url).catch(() => null)
+          if (config === null) {
+            continue
+          }
+          if (config.id === id && config.version === version) {
+            return {
+              config,
+              version: config.version,
+              createdDate: date,
+              prId,
+            }
+          }
+        }
+      }
+    }
+  }
+  throw new Error(`Failed to get draft workflow ${id}`)
 }

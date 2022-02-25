@@ -11,11 +11,7 @@ import { Config } from '@/types/ghTrs'
 export const extractConfig = (
   wf: PublishedWorkflow | DraftWorkflow
 ): Config => {
-  if (isPublishedWorkflow(wf)) {
-    return wf.latest.config
-  } else {
-    return wf.config
-  }
+  return wf.config
 }
 
 export const extractAuthors = (
@@ -23,8 +19,7 @@ export const extractAuthors = (
 ): string[] => {
   if (isPublishedWorkflow(wf)) {
     return (
-      wf.latest.toolVersion?.author ||
-      wf.latest.config.authors.map((a) => a.github_account)
+      wf.toolVersion?.author || wf.config.authors.map((a) => a.github_account)
     )
   } else {
     return wf.config.authors.map((a) => a.github_account)
@@ -46,7 +41,7 @@ export const extractWfName = (
   wf: PublishedWorkflow | DraftWorkflow
 ): string => {
   if (isPublishedWorkflow(wf)) {
-    return wf.latest.toolVersion?.name || wf.latest.config.workflow.name
+    return wf.toolVersion?.name || wf.config.workflow.name
   } else {
     return wf.config.workflow.name
   }
@@ -98,8 +93,8 @@ export const extractWfType = (
 ): WfType => {
   if (isPublishedWorkflow(wf)) {
     return (
-      (wf.latest.toolVersion?.descriptor_type?.[0] as WfType) ||
-      wf.latest.config.workflow.language?.type ||
+      (wf.toolVersion?.descriptor_type?.[0] as WfType) ||
+      wf.config.workflow.language?.type ||
       'CWL'
     )
   } else {
@@ -144,16 +139,12 @@ export const wfTypeCounts = (state: RootState): WfTypeCounts => {
 export const extractVersion = (
   wf: PublishedWorkflow | DraftWorkflow
 ): string => {
-  if (isPublishedWorkflow(wf)) {
-    return wf.latest.version
-  } else {
-    return wf.version
-  }
+  return wf.version
 }
 
 export const extractDate = (wf: PublishedWorkflow | DraftWorkflow): string => {
   if (isPublishedWorkflow(wf)) {
-    return wf.latest.modifiedDate
+    return wf.modifiedDate
   } else {
     return wf.createdDate
   }
@@ -163,7 +154,7 @@ export const extractConceptDoi = (
   wf: PublishedWorkflow | DraftWorkflow
 ): string | null => {
   if (isPublishedWorkflow(wf)) {
-    return wf.latest.config.zenodo?.concept_doi || null
+    return wf.config.zenodo?.concept_doi || null
   } else {
     return wf.config.zenodo?.concept_doi || null
   }
@@ -171,7 +162,7 @@ export const extractConceptDoi = (
 
 export const isVerified = (wf: PublishedWorkflow | DraftWorkflow): boolean => {
   if (isPublishedWorkflow(wf)) {
-    return wf.latest.toolVersion.verified || false
+    return wf.toolVersion.verified || false
   } else {
     return false
   }

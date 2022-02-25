@@ -1,3 +1,5 @@
+/// Store for Home Page
+
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { getDraftWorkflows, getPublishedWorkflows } from '@/api/trs'
@@ -6,12 +8,10 @@ import { Tool, ToolVersion } from '@/types/trs'
 
 export interface PublishedWorkflow {
   tool: Tool
-  latest: {
-    toolVersion: ToolVersion
-    config: Config
-    version: string
-    modifiedDate: string
-  }
+  version: string
+  toolVersion: ToolVersion
+  config: Config
+  modifiedDate: string
 }
 
 export const isPublishedWorkflow = (
@@ -45,12 +45,10 @@ interface WorkflowsState {
   published: {
     [id: string]: {
       tool: Tool
-      latest: {
-        toolVersion: ToolVersion
-        config: Config
-        version: string
-        modifiedDate: string
-      }
+      toolVersion: ToolVersion
+      config: Config
+      version: string
+      modifiedDate: string
     }
   }
   publishedLoading: boolean
