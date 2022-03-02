@@ -1,20 +1,22 @@
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import dayjs from 'dayjs'
 import React from 'react'
 
 const Footer: React.VFC = () => {
   return (
-    <Box component='footer' sx={{ pb: 2, height: '35px' }}>
-      <Typography
-        align='center'
+    <Box component='footer' sx={{ height: '35px', pb: 2, textAlign: 'center' }}>
+      <Box
+        // align='center'
+        children={`© ${dayjs().format(
+          'YYYY'
+        )} - ${__APP_NAME__} ${__APP_VERSION__}`}
+        component='span'
         sx={{
-          fontWeight: 'light',
-          fontSize: '0.8rem',
-          color: 'primary.main',
           fontFamily: 'Quicksand',
-        }}>
-        © {dayjs().format('YYYY')} - {__APP_NAME__} {__APP_VERSION__}
-      </Typography>
+          fontSize: '0.8rem',
+          fontWeight: 'light',
+        }}
+      />
     </Box>
   )
 }

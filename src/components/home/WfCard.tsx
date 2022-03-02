@@ -1,14 +1,6 @@
 import BuildRoundedIcon from '@mui/icons-material/BuildRounded'
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded'
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Link,
-  Stack,
-  Typography,
-} from '@mui/material'
+import { Box, Button, Card, CardContent, Link, Stack } from '@mui/material'
 import React from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 
@@ -45,68 +37,76 @@ const WfCard: React.VFC<Props> = (props: Props) => {
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            rowGap: 2,
             height: '100%',
+            rowGap: 2,
           }}>
           <Stack direction='row' spacing={2} sx={{ alignItems: 'center' }}>
             <WfTypeAvatar
-              sx={{ width: '1.4rem', height: '1.4rem' }}
+              sx={{ height: '1.4rem', width: '1.4rem' }}
               wfType={wfType}
             />
             <Link
+              children={config.workflow.name}
               component={RouterLink}
               sx={{
                 color: 'primary.main',
                 fontSize: '1.2rem',
                 fontWeight: 'bold',
-                textDecoration: 'none',
-                '&:hover': {
-                  textDecoration: 'underline',
-                },
               }}
               to={`workflows/${config.id}`}
-              underline='none'>
-              {config.workflow.name}
-            </Link>
+              underline='hover'
+            />
             {verified ? (
               <CheckRoundedIcon
-                color='success'
-                sx={{ width: '1.4rem', height: '1.4rem' }}
+                sx={{
+                  color: 'success.light',
+                  height: '1.4rem',
+                  width: '1.4rem',
+                }}
               />
             ) : null}
             {published ? null : (
               <BuildRoundedIcon
-                color='error'
-                sx={{ width: '1.2rem', height: '1.2rem' }}
+                sx={{ color: 'error.light', height: '1.2rem', width: '1.2rem' }}
               />
             )}
           </Stack>
           <Box
             sx={{
-              px: 2,
               display: 'flex',
               flexDirection: 'column',
               flexGrow: 1,
+              px: 2,
+              rowGap: 2,
             }}>
             <Authors authors={authors} sx={{ flexGrow: 1 }} />
-            <Stack
-              direction='row'
-              spacing={2}
-              sx={{ alignItems: 'center', mt: 2 }}>
-              <Button
-                color='secondary'
-                component={RouterLink}
-                size='small'
-                sx={{ textTransform: 'none' }}
-                to={`workflows/${config.id}/versions/${config.version}`}
-                variant='outlined'>
-                Version {config.version}
-              </Button>
-              <Typography sx={{ fontSize: '0.9rem', fontWeight: 'light' }}>
-                {agoStr}
-              </Typography>
+            <Box
+              sx={{
+                alignItems: 'center',
+                columnGap: 2,
+                display: 'flex',
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                rowGap: 2,
+              }}>
+              <Stack direction='row' spacing={2} sx={{ alignItems: 'center' }}>
+                <Button
+                  children={`Version ${config.version}`}
+                  color='secondary'
+                  component={RouterLink}
+                  size='small'
+                  sx={{ textTransform: 'none' }}
+                  to={`workflows/${config.id}/versions/${config.version}`}
+                  variant='outlined'
+                />
+                <Box
+                  children={agoStr}
+                  component='p'
+                  sx={{ fontSize: '0.9rem', fontWeight: 'light' }}
+                />
+              </Stack>
               {doi ? <DoiBadge doi={doi} /> : null}
-            </Stack>
+            </Box>
           </Box>
         </Box>
       </CardContent>

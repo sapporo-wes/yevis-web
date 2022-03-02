@@ -1,13 +1,12 @@
-import { Box, Stack, Theme, Typography } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 import React from 'react'
 
-import PublishStatusFilter from '@/components/home/PublishStatusFilter'
-import SortBy from '@/components/home/SortBy'
-import WfCard from '@/components/home/WfCard'
-import WfNameFilter from '@/components/home/WfNameFilter'
-import WfTypeFilter from '@/components/home/WfTypeFilter'
+import ErrorMsg from '@/components/home/ErrorMsg'
+import Filters from '@/components/home/Filters'
+import LoadingMsg from '@/components/home/LoadingMsg'
+import WfCards from '@/components/home/WfCards'
 import { RootState, useAppSelector } from '@/store'
-import { filteredWfs, isError, isLoading } from '@/store/getters'
+import { isError, isLoading } from '@/store/getters'
 
 interface Props {
   sx?: object
@@ -15,13 +14,6 @@ interface Props {
 
 const WfList: React.VFC<Props> = (props: Props) => {
   const rootState = useAppSelector((state: RootState) => state)
-  const publishedError = useAppSelector(
-    (state: RootState) => state.workflows.publishedError
-  )
-  const draftError = useAppSelector(
-    (state: RootState) => state.workflows.draftError
-  )
-  const wfs = filteredWfs(rootState)
   const loading = isLoading(rootState)
   const error = isError(rootState)
 
@@ -34,111 +26,12 @@ const WfList: React.VFC<Props> = (props: Props) => {
       <Box
         sx={{
           maxWidth: 'lg',
-          minWidth: 'lg',
           mx: 'auto',
           px: 4,
         }}>
         <Stack spacing={2}>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              rowGap: 2,
-              columnGap: 2,
-            }}>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                flexWrap: 'nowrap',
-                minWidth: '300px',
-                columnGap: 2,
-                width: (theme: Theme) => `calc(50% - ${theme.spacing(1)})`,
-              }}>
-              <WfNameFilter
-                sx={{
-                  minWidth: '200px',
-                  flexGrow: 4,
-                }}
-              />
-              <PublishStatusFilter
-                sx={{
-                  minWidth: '260px',
-                  flexGrow: 1,
-                }}
-              />
-            </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                flexWrap: 'nowrap',
-                columnGap: 2,
-                width: (theme: Theme) => `calc(50% - ${theme.spacing(1)})`,
-              }}>
-              <WfTypeFilter
-                sx={{
-                  flexGrow: 1,
-                  minWidth: '432px',
-                }}
-              />
-              <SortBy
-                sx={{
-                  maxWidth: '80px',
-                  minWidth: '80px',
-                }}
-              />
-            </Box>
-          </Box>
-          {loading ? (
-            <Typography
-              sx={{
-                fontSize: '1.2rem',
-                color: 'primary.main',
-              }}>
-              Loading workflows...
-            </Typography>
-          ) : error ? (
-            <Typography
-              sx={{
-                fontSize: '1.2rem',
-                color: 'primary.main',
-              }}>
-              An unexpected error occurred while loading workflows:
-              {publishedError !== null && (
-                <>
-                  <br />- Error while loading published workflows:{' '}
-                  {publishedError}
-                </>
-              )}
-              {draftError !== null && (
-                <>
-                  <br />- Error while loading draft workflows: {draftError}
-                </>
-              )}
-            </Typography>
-          ) : (
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                rowGap: 2,
-                columnGap: 2,
-                justifyContent: 'stretch',
-              }}>
-              {wfs.map((wf, i) => (
-                <WfCard
-                  key={i}
-                  sx={{
-                    width: (theme: Theme) => `calc(50% - ${theme.spacing(1)})`,
-                  }}
-                  wf={wf}
-                />
-              ))}
-            </Box>
-          )}
+          <Filters />
+          {loading ? <LoadingMsg /> : error ? <ErrorMsg /> : <WfCards />}
         </Stack>
       </Box>
     </Box>

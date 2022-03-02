@@ -25,8 +25,8 @@ const Hero: React.VFC<Props> = (props: Props) => {
   return (
     <Box
       sx={{
-        maxWidth: '100vw',
         bgcolor: 'primary.main',
+        maxWidth: '100vw',
         ...props.sx,
       }}>
       <Box
@@ -34,53 +34,53 @@ const Hero: React.VFC<Props> = (props: Props) => {
           maxWidth: 'lg',
           minWidth: 'lg',
           mx: 'auto',
-          py: 4,
           px: 4,
+          py: 4,
         }}>
         <Stack spacing={2}>
-          <Link component={RouterLink} to='/'>
+          <Link component={RouterLink} to='/' underline='hover'>
             <Stack direction='row' sx={{ alignItems: 'center' }}>
               <HomeRoundedIcon
                 sx={{
                   color: 'secondary.main',
-                  width: '1.2rem',
                   height: '1.2rem',
+                  width: '1.2rem',
                 }}
               />
               <ArrowBackIosNewRoundedIcon
                 sx={{
                   color: 'secondary.main',
-                  width: '1.2rem',
                   height: '1.2rem',
+                  width: '1.2rem',
                 }}
               />
               <Typography
                 sx={{
-                  color: 'secondary.main',
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  fontFamily: 'Quicksand',
-                  ml: 1,
-                  my: 0,
                   '&:hover': {
                     textDecoration: 'underline',
                   },
+                  color: 'secondary.main',
+                  fontFamily: 'Quicksand',
+                  fontSize: '1.2rem',
+                  fontWeight: 'bold',
+                  ml: 1,
+                  my: 0,
                 }}>{`${wfRepo()}`}</Typography>
             </Stack>
           </Link>
 
           <Stack direction='row' spacing={2} sx={{ alignItems: 'center' }}>
             <WfTypeAvatar
-              sx={{ width: '3rem', height: '3rem' }}
+              sx={{ height: '3rem', width: '3rem' }}
               wfType={wfType}
             />
             <Typography
               component='h1'
               sx={{
                 color: 'white',
+                fontFamily: 'Quicksand',
                 fontSize: '3rem',
                 fontWeight: 'bold',
-                fontFamily: 'Quicksand',
                 my: 0,
               }}>
               {wfName}
@@ -91,10 +91,10 @@ const Hero: React.VFC<Props> = (props: Props) => {
                 label='Verified'
                 size='small'
                 sx={{
-                  color: 'white',
                   '.MuiChip-icon': {
                     color: 'white',
                   },
+                  color: 'white',
                 }}
                 variant='outlined'
               />
@@ -105,10 +105,10 @@ const Hero: React.VFC<Props> = (props: Props) => {
                 label='Draft'
                 size='small'
                 sx={{
-                  color: 'white',
                   '.MuiChip-icon': {
                     color: 'white',
                   },
+                  color: 'white',
                 }}
                 variant='outlined'
               />

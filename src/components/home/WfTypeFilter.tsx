@@ -1,4 +1,4 @@
-import { ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import React from 'react'
 
 import WfTypeAvatar from '@/components/WfTypeAvatar'
@@ -29,31 +29,31 @@ const WfTypeFilter: React.VFC<Props> = (props: Props) => {
       value={selectedWfType}>
       <ToggleButton sx={{ textTransform: 'none', width: '25%' }} value='CWL'>
         <WfTypeAvatar
-          sx={{ width: '1.4rem', height: '1.4rem', mr: 1 }}
+          sx={{ height: '1.4rem', mr: 1, width: '1.4rem' }}
           wfType='CWL'
-        />{' '}
-        CWL ({counts.CWL})
+        />
+        <Box children={`CWL (${counts.CWL})`} component='span' />
       </ToggleButton>
       <ToggleButton sx={{ textTransform: 'none', width: '25%' }} value='WDL'>
         <WfTypeAvatar
-          sx={{ width: '1.4rem', height: '1.4rem', mr: 1 }}
+          sx={{ height: '1.4rem', mr: 1, width: '1.4rem' }}
           wfType='WDL'
-        />{' '}
-        WDL ({counts.WDL})
+        />
+        <Box children={`WDL (${counts.WDL})`} component='span' />
       </ToggleButton>
       <ToggleButton sx={{ textTransform: 'none', width: '25%' }} value='NFL'>
         <WfTypeAvatar
-          sx={{ width: '1.4rem', height: '1.4rem', mr: 1 }}
+          sx={{ height: '1.4rem', mr: 1, width: '1.4rem' }}
           wfType='NFL'
-        />{' '}
-        NFL ({counts.NFL})
+        />
+        <Box children={`NFL (${counts.NFL})`} component='span' />
       </ToggleButton>
       <ToggleButton sx={{ textTransform: 'none', width: '25%' }} value='SMK'>
         <WfTypeAvatar
-          sx={{ width: '1.4rem', height: '1.4rem', mr: 1 }}
+          sx={{ height: '1.4rem', mr: 1, width: '1.4rem' }}
           wfType='SMK'
-        />{' '}
-        SMK ({counts.SMK})
+        />
+        <Box children={`SMK (${counts.SMK})`} component='span' />
       </ToggleButton>
     </ToggleButtonGroup>
   )

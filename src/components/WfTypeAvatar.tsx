@@ -34,9 +34,11 @@ const WfTypeAvatar: React.VFC<Props> = (props: Props) => {
       variant='square'
     />
   ) : (
-    <Avatar sx={{ ...props.sx }} variant='square'>
-      <QuestionMarkRoundedIcon />
-    </Avatar>
+    <Avatar
+      children={<QuestionMarkRoundedIcon />}
+      sx={{ ...props.sx }}
+      variant='square'
+    />
   )
 }
 

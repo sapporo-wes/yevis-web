@@ -15,20 +15,33 @@ const HeadComponent: React.VFC<{
       children={children}
       component={level === 1 ? 'h2' : level == 2 ? 'h3' : 'h4'}
       sx={{
-        fontSize: level === 1 ? '2rem' : level === 2 ? '1.5rem' : '1.25rem',
-        paddingBottom: level === 1 ? '0.3rem' : null,
         borderBottom:
           level === 1 || level == 2 ? '1px solid hsla(210,18%,87%,1)' : null,
-        marginBottom: '1rem',
+        color: 'primary.main',
+        fontSize: level === 1 ? '2rem' : level === 2 ? '1.5rem' : '1.25rem',
         fontWeight: 'bold',
         lineHeight: '1.25',
-        color: 'primary.main',
+        marginBottom: '1rem',
+        paddingBottom: level === 1 ? '0.3rem' : null,
       }}
     />
   )
 }
 
 const components: Components = {
+  a: ({ href, target, children }) => {
+    return (
+      <Link
+        children={children}
+        href={href}
+        sx={{
+          color: 'secondary.dark',
+        }}
+        target={target}
+        underline='hover'
+      />
+    )
+  },
   code: ({ inline, className, children }) => {
     if (!inline) {
       const language = className?.replace('language-', '') || ''
@@ -36,15 +49,15 @@ const components: Components = {
         <Prism
           children={children}
           customStyle={{
-            margin: '0',
-            paddingTop: '1rem',
-            paddingBottom: '0',
-            borderRadius: '0.25rem',
-            fontSize: '0.875rem',
-            backgroundColor: '#f5f5f5',
             '.token': {
               background: '#f5f5f5',
             },
+            backgroundColor: '#f5f5f5',
+            borderRadius: '0.25rem',
+            fontSize: '0.875rem',
+            margin: '0',
+            paddingBottom: '0',
+            paddingTop: '1rem',
           }}
           language={language}
           style={prism}
@@ -56,40 +69,16 @@ const components: Components = {
           children={children}
           style={{
             backgroundColor: '#f5f5f5',
-            padding: '0.2em 0.4em',
-            margin: '0',
             borderRadius: '0.25rem',
-            fontSize: '0.875rem',
             fontFamily:
               'ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace',
+            fontSize: '0.875rem',
+            margin: '0',
+            padding: '0.2em 0.4em',
           }}
         />
       )
     }
-  },
-  a: ({ href, target, children }) => {
-    return (
-      <Link
-        children={children}
-        href={href}
-        sx={{
-          textDecoration: 'none',
-          color: 'secondary.dark',
-        }}
-        target={target}
-      />
-    )
-  },
-  li: ({ className, checked, ordered, children }) => {
-    return (
-      <li
-        className={className}
-        style={{
-          listStyle: checked ? 'none' : ordered ? 'decimal' : 'disc',
-        }}>
-        {children}
-      </li>
-    )
   },
   h1: ({ children }) => {
     return <HeadComponent children={children} level={1} />
@@ -116,6 +105,17 @@ const components: Components = {
           margin: '1rem 0',
         }}
       />
+    )
+  },
+  li: ({ className, checked, ordered, children }) => {
+    return (
+      <li
+        className={className}
+        style={{
+          listStyle: checked ? 'none' : ordered ? 'decimal' : 'disc',
+        }}>
+        {children}
+      </li>
     )
   },
 }

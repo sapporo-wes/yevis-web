@@ -2,9 +2,9 @@ import { Box, Stack } from '@mui/material'
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
-import ErrorMessage from '@/components/detail/ErrorMessage'
+import ErrorMsg from '@/components/detail/ErrorMsg'
 import Hero from '@/components/detail/Hero'
-import LoadingMessage from '@/components/detail/LoadingMessage'
+import LoadingMsg from '@/components/detail/LoadingMsg'
 import WfContent from '@/components/detail/WfContent'
 import Footer from '@/components/Footer'
 import { RootState, useAppDispatch, useAppSelector } from '@/store'
@@ -29,9 +29,9 @@ const Detail: React.VFC = () => {
       <main>
         <Box sx={{ minHeight: 'calc(100vh - 35px)', pb: 4 }}>
           {loading ? (
-            <LoadingMessage />
+            <LoadingMsg />
           ) : error ? (
-            <ErrorMessage error={error} />
+            <ErrorMsg error={error} />
           ) : (
             <Stack spacing={4}>
               <Hero wf={wf as PublishedWorkflow | DraftWorkflow} />

@@ -25,12 +25,16 @@ const SortBy: React.VFC<Props> = (props: Props) => {
       size='small'
       sx={{ ...props.sx }}
       value={sortBy}>
-      <ToggleButton sx={{ textTransform: 'none', width: '50%' }} value='date'>
-        <AccessTimeOutlinedIcon />
-      </ToggleButton>
-      <ToggleButton sx={{ textTransform: 'none', width: '50%' }} value='name'>
-        <SortByAlphaOutlinedIcon />
-      </ToggleButton>
+      <ToggleButton
+        children={<AccessTimeOutlinedIcon />}
+        sx={{ textTransform: 'none', width: '50%' }}
+        value='date'
+      />
+      <ToggleButton
+        children={<SortByAlphaOutlinedIcon />}
+        sx={{ textTransform: 'none', width: '50%' }}
+        value='name'
+      />
     </ToggleButtonGroup>
   )
 }

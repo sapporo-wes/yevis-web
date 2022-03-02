@@ -7,24 +7,24 @@ interface Props {
   sx?: object
 }
 
-const ErrorMessage: React.VFC<Props> = (props: Props) => {
+const ErrorMsg: React.VFC<Props> = (props: Props) => {
   return (
     <Box sx={{ maxWidth: '100vw', ...props.sx }}>
       <Stack
         spacing={2}
-        sx={{ maxWidth: 'lg', minWidth: 'lg', mx: 'auto', px: 4, pt: 4 }}>
+        sx={{ maxWidth: 'lg', minWidth: 'lg', mx: 'auto', pt: 4, px: 4 }}>
         <Typography
           sx={{
-            fontSize: '1.2rem',
             color: 'primary.main',
+            fontSize: '1.2rem',
           }}>
           An unexpected error occurred while loading workflow: {props.error}
         </Typography>
         <RouterLink to='/'>
           <Typography
             sx={{
-              fontSize: '1.2rem',
               color: 'primary.main',
+              fontSize: '1.2rem',
             }}>
             Back to home
           </Typography>
@@ -34,4 +34,4 @@ const ErrorMessage: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default ErrorMessage
+export default ErrorMsg

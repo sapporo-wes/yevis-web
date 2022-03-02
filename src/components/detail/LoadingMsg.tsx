@@ -5,7 +5,7 @@ interface Props {
   sx?: object
 }
 
-const LoadingMessage: React.VFC<Props> = (props: Props) => {
+const LoadingMsg: React.VFC<Props> = (props: Props) => {
   return (
     <Box sx={{ maxWidth: '100vw', ...props.sx }}>
       <Box sx={{ maxWidth: 'lg', minWidth: 'lg', mx: 'auto', px: 4, pt: 4 }}>
@@ -21,4 +21,4 @@ const LoadingMessage: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default LoadingMessage
+export default LoadingMsg
