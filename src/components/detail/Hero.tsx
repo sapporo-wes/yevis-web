@@ -2,7 +2,7 @@ import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRound
 import BuildRoundedIcon from '@mui/icons-material/BuildRounded'
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
-import { Box, Chip, Link, Stack, Typography } from '@mui/material'
+import { Box, Chip, Link, Stack } from '@mui/material'
 import React from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 
@@ -32,10 +32,8 @@ const Hero: React.VFC<Props> = (props: Props) => {
       <Box
         sx={{
           maxWidth: 'lg',
-          minWidth: 'lg',
           mx: 'auto',
-          px: 4,
-          py: 4,
+          p: 4,
         }}>
         <Stack spacing={2}>
           <Link component={RouterLink} to='/' underline='hover'>
@@ -54,7 +52,9 @@ const Hero: React.VFC<Props> = (props: Props) => {
                   width: '1.2rem',
                 }}
               />
-              <Typography
+              <Box
+                children={wfRepo()}
+                component='span'
                 sx={{
                   '&:hover': {
                     textDecoration: 'underline',
@@ -63,28 +63,26 @@ const Hero: React.VFC<Props> = (props: Props) => {
                   fontFamily: 'Quicksand',
                   fontSize: '1.2rem',
                   fontWeight: 'bold',
-                  ml: 1,
-                  my: 0,
-                }}>{`${wfRepo()}`}</Typography>
+                }}
+              />
             </Stack>
           </Link>
-
           <Stack direction='row' spacing={2} sx={{ alignItems: 'center' }}>
             <WfTypeAvatar
               sx={{ height: '3rem', width: '3rem' }}
               wfType={wfType}
             />
-            <Typography
+            <Box
+              children={`${wfName}`}
               component='h1'
               sx={{
-                color: 'white',
+                color: 'common.white',
                 fontFamily: 'Quicksand',
-                fontSize: '3rem',
+                fontSize: '2.6rem',
                 fontWeight: 'bold',
                 my: 0,
-              }}>
-              {wfName}
-            </Typography>
+              }}
+            />
             {verified ? (
               <Chip
                 icon={<CheckRoundedIcon />}
@@ -92,9 +90,9 @@ const Hero: React.VFC<Props> = (props: Props) => {
                 size='small'
                 sx={{
                   '.MuiChip-icon': {
-                    color: 'white',
+                    color: 'common.white',
                   },
-                  color: 'white',
+                  color: 'common.white',
                 }}
                 variant='outlined'
               />
@@ -106,9 +104,9 @@ const Hero: React.VFC<Props> = (props: Props) => {
                 size='small'
                 sx={{
                   '.MuiChip-icon': {
-                    color: 'white',
+                    color: 'common.white',
                   },
-                  color: 'white',
+                  color: 'common.white',
                 }}
                 variant='outlined'
               />

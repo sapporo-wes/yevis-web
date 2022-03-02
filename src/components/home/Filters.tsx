@@ -27,9 +27,8 @@ const Filters: React.VFC<Props> = (props: Props) => {
           display: 'flex',
           flexDirection: 'row',
           flexGrow: 1,
-          flexWrap: 'nowrap',
           minWidth: (theme: Theme) =>
-            `calc((${theme.breakpoints.values.lg}px - ${theme.spacing(
+            `(${theme.breakpoints.values.lg}px - ${theme.spacing(
               4 * 2 + 2
             )}) / 2)`,
         }}>
@@ -50,16 +49,14 @@ const Filters: React.VFC<Props> = (props: Props) => {
           display: 'flex',
           flexDirection: 'row',
           flexGrow: 1,
-          flexWrap: 'nowrap',
           minWidth: (theme: Theme) =>
             `calc((${theme.breakpoints.values.lg}px - ${theme.spacing(
-              10
+              4 * 2 + 2
             )}) / 2)`,
         }}>
         <WfTypeFilter
           sx={{
             flexGrow: 1,
-            minWidth: '440px',
           }}
         />
         <SortBy

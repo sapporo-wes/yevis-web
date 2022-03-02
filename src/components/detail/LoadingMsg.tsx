@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import React from 'react'
 
 interface Props {
@@ -8,14 +8,13 @@ interface Props {
 const LoadingMsg: React.VFC<Props> = (props: Props) => {
   return (
     <Box sx={{ maxWidth: '100vw', ...props.sx }}>
-      <Box sx={{ maxWidth: 'lg', minWidth: 'lg', mx: 'auto', px: 4, pt: 4 }}>
-        <Typography
+      <Box sx={{ maxWidth: 'lg', mx: 'auto', pt: 4, px: 4 }}>
+        <Box
+          children='Loading workflow...'
           sx={{
             fontSize: '1.2rem',
-            color: 'primary.main',
-          }}>
-          Loading workflow...
-        </Typography>
+          }}
+        />
       </Box>
     </Box>
   )

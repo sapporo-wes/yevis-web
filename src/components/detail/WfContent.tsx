@@ -15,34 +15,32 @@ const WfContent: React.VFC<Props> = (props: Props) => {
     <Box sx={{ maxWidth: '100vw', ...props.sx }}>
       <Box
         sx={{
-          maxWidth: 'lg',
-          minWidth: 'lg',
-          mx: 'auto',
-          px: 4,
+          columnGap: 2,
           display: 'flex',
           flexDirection: 'col',
           flexWrap: 'wrap-reverse',
+          maxWidth: 'lg',
+          mx: 'auto',
+          px: 4,
           rowGap: 2,
-          columnGap: 2,
         }}>
         <Card
           sx={{
-            width: (theme: Theme) => `calc(70% - ${theme.spacing(1)})`,
             flexGrow: 1,
+            width: (theme: Theme) => `calc(70% - ${theme.spacing(1)})`,
           }}>
-          <CardContent>
-            <ContentBox wf={props.wf} />
-          </CardContent>
+          <CardContent children={<ContentBox wf={props.wf} />} />
         </Card>
         <Card
           sx={{
-            width: (theme: Theme) => `calc(30% - ${theme.spacing(1)})`,
             flexGrow: 1,
-            minWidth: '300px',
+            minWidth: (theme: Theme) =>
+              `calc((${theme.breakpoints.values.md}px - ${theme.spacing(
+                4 * 2 + 2
+              )}) / 10 * 3)`,
+            width: (theme: Theme) => `calc(30% - ${theme.spacing(1)})`,
           }}>
-          <CardContent>
-            <InfoBox wf={props.wf} />
-          </CardContent>
+          <CardContent children={<InfoBox wf={props.wf} />} />
         </Card>
       </Box>
     </Box>

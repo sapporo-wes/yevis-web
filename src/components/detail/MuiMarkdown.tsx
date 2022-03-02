@@ -35,7 +35,7 @@ const components: Components = {
         children={children}
         href={href}
         sx={{
-          color: 'secondary.dark',
+          color: 'secondary.main',
         }}
         target={target}
         underline='hover'
@@ -70,11 +70,10 @@ const components: Components = {
           style={{
             backgroundColor: '#f5f5f5',
             borderRadius: '0.25rem',
-            fontFamily:
-              'ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace',
+            fontFamily: 'Menlo,monospace,Quicksand',
             fontSize: '0.875rem',
             margin: '0',
-            padding: '0.2em 0.4em',
+            padding: '0.2rem 0.4rem',
           }}
         />
       )
