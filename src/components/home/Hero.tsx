@@ -26,10 +26,10 @@ const Hero: React.VFC<Props> = (props: Props) => {
           maxWidth: 'lg',
           minWidth: 'lg',
           mx: 'auto',
-          py: 6,
-          px: 8,
+          py: 4,
+          px: 4,
         }}>
-        <Stack spacing={4}>
+        <Stack spacing={2}>
           <Typography
             component='h1'
             sx={{

@@ -14,12 +14,9 @@ import { Link as RouterLink } from 'react-router-dom'
 
 import Authors from '@/components/home/Authors'
 import DoiBadge from '@/components/home/DoiBadge'
-import WfTypeAvatar from '@/components/home/WfTypeAvatar'
+import WfTypeAvatar from '@/components/WfTypeAvatar'
 import {
   extractAuthors,
-  extractConceptDoi,
-  extractConfig,
-  extractVersion,
   extractWfType,
   generateAgoStr,
   isPublished,
@@ -33,14 +30,13 @@ interface Props {
 }
 
 const WfCard: React.VFC<Props> = (props: Props) => {
-  const config = extractConfig(props.wf)
+  const config = props.wf.config
   const wfType = extractWfType(props.wf)
   const verified = isVerified(props.wf)
   const published = isPublished(props.wf)
   const authors = extractAuthors(props.wf)
-  const version = extractVersion(props.wf)
   const agoStr = generateAgoStr(props.wf)
-  const doi = extractConceptDoi(props.wf)
+  const doi = config.zenodo?.concept_doi
 
   return (
     <Card sx={props.sx}>
@@ -102,9 +98,9 @@ const WfCard: React.VFC<Props> = (props: Props) => {
                 component={RouterLink}
                 size='small'
                 sx={{ textTransform: 'none' }}
-                to={`workflows/${config.id}/versions/${version}`}
+                to={`workflows/${config.id}/versions/${config.version}`}
                 variant='outlined'>
-                Version {version}
+                Version {config.version}
               </Button>
               <Typography sx={{ fontSize: '0.9rem', fontWeight: 'light' }}>
                 {agoStr}

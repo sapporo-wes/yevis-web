@@ -77,10 +77,10 @@ const initialState: WorkflowsState = {
 
 export const fetchPublishedWorkflows = createAsyncThunk(
   'workflows/fetchPublishedWorkflows',
-  async (_, { rejectWithValue }) => {
+  async (_, { fulfillWithValue, rejectWithValue }) => {
     try {
       const wfs = await getPublishedWorkflows()
-      return wfs
+      return fulfillWithValue(wfs)
     } catch (err) {
       return rejectWithValue((err as Error).message)
     }
@@ -89,10 +89,10 @@ export const fetchPublishedWorkflows = createAsyncThunk(
 
 export const fetchDraftWorkflows = createAsyncThunk(
   'workflows/fetchDraftWorkflows',
-  async (_, { rejectWithValue }) => {
+  async (_, { fulfillWithValue, rejectWithValue }) => {
     try {
       const wfs = await getDraftWorkflows()
-      return wfs
+      return fulfillWithValue(wfs)
     } catch (err) {
       return rejectWithValue((err as Error).message)
     }

@@ -4,8 +4,8 @@ import React from 'react'
 import { Provider } from 'react-redux'
 import { Route, Routes } from 'react-router-dom'
 
+import Detail from '@/pages/Detail'
 import Home from '@/pages/Home'
-import Workflow from '@/pages/Workflow'
 import store from '@/store'
 
 const theme = createTheme({
@@ -37,8 +37,8 @@ const App: React.VFC = () => {
         <Routes>
           <Route element={<Home />} index />
           <Route path='workflows/:id'>
-            <Route element={<Workflow />} index />
-            <Route element={<Workflow />} path='versions/:version' />
+            <Route element={<Detail />} index />
+            <Route element={<Detail />} path='versions/:version' />
           </Route>
           <Route element={<div>no page</div>} path='*' />
         </Routes>

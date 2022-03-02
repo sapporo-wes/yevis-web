@@ -1,7 +1,7 @@
 import { ToggleButton, ToggleButtonGroup } from '@mui/material'
 import React from 'react'
 
-import WfTypeAvatar from '@/components/home/WfTypeAvatar'
+import WfTypeAvatar from '@/components/WfTypeAvatar'
 import { RootState, useAppDispatch, useAppSelector } from '@/store'
 import { setWfType, WfType } from '@/store/filter'
 import { disableFilter, wfTypeCounts } from '@/store/getters'

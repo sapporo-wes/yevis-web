@@ -1,4 +1,4 @@
-import { Stack } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 import React, { useEffect } from 'react'
 
 import Footer from '@/components/Footer'
@@ -19,10 +19,12 @@ const Home: React.VFC = () => {
   return (
     <React.Fragment>
       <main>
-        <Stack spacing={4} sx={{ minHeight: 'calc(100vh - 35px)', pb: 4 }}>
-          <Hero />
-          <WfList />
-        </Stack>
+        <Box sx={{ minHeight: 'calc(100vh - 35px)', pb: 4 }}>
+          <Stack spacing={4}>
+            <Hero />
+            <WfList />
+          </Stack>
+        </Box>
       </main>
       <Footer />
     </React.Fragment>

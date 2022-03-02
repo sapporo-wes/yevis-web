@@ -1,7 +1,6 @@
 import { Box, Stack, Theme, Typography } from '@mui/material'
 import React from 'react'
 
-// import AuthorsFilter from '@/components/home/AuthorsFilter'
 import PublishStatusFilter from '@/components/home/PublishStatusFilter'
 import SortBy from '@/components/home/SortBy'
 import WfCard from '@/components/home/WfCard'
@@ -37,7 +36,7 @@ const WfList: React.VFC<Props> = (props: Props) => {
           maxWidth: 'lg',
           minWidth: 'lg',
           mx: 'auto',
-          px: 8,
+          px: 4,
         }}>
         <Stack spacing={2}>
           <Box
@@ -48,35 +47,49 @@ const WfList: React.VFC<Props> = (props: Props) => {
               rowGap: 2,
               columnGap: 2,
             }}>
-            <WfNameFilter
+            <Box
               sx={{
-                minWidth: '200px',
-                flexGrow: 4,
-              }}
-            />
-            {/* <AuthorsFilter
+                display: 'flex',
+                flexDirection: 'row',
+                flexWrap: 'nowrap',
+                minWidth: '300px',
+                columnGap: 2,
+                width: (theme: Theme) => `calc(50% - ${theme.spacing(1)})`,
+              }}>
+              <WfNameFilter
+                sx={{
+                  minWidth: '200px',
+                  flexGrow: 4,
+                }}
+              />
+              <PublishStatusFilter
+                sx={{
+                  minWidth: '260px',
+                  flexGrow: 1,
+                }}
+              />
+            </Box>
+            <Box
               sx={{
-                minWidth: '200px',
-              }}
-            /> */}
-            <PublishStatusFilter
-              sx={{
-                minWidth: '260px',
-                flexGrow: 1,
-              }}
-            />
-            <WfTypeFilter
-              sx={{
-                flexGrow: 1,
-                minWidth: '432px',
-              }}
-            />
-            <SortBy
-              sx={{
-                maxWidth: '80px',
-                minWidth: '80px',
-              }}
-            />
+                display: 'flex',
+                flexDirection: 'row',
+                flexWrap: 'nowrap',
+                columnGap: 2,
+                width: (theme: Theme) => `calc(50% - ${theme.spacing(1)})`,
+              }}>
+              <WfTypeFilter
+                sx={{
+                  flexGrow: 1,
+                  minWidth: '432px',
+                }}
+              />
+              <SortBy
+                sx={{
+                  maxWidth: '80px',
+                  minWidth: '80px',
+                }}
+              />
+            </Box>
           </Box>
           {loading ? (
             <Typography

@@ -6,24 +6,11 @@ import {
   isPublishedWorkflow,
   PublishedWorkflow,
 } from '@/store/workflows'
-import { Config } from '@/types/ghTrs'
-
-export const extractConfig = (
-  wf: PublishedWorkflow | DraftWorkflow
-): Config => {
-  return wf.config
-}
 
 export const extractAuthors = (
   wf: PublishedWorkflow | DraftWorkflow
 ): string[] => {
-  if (isPublishedWorkflow(wf)) {
-    return (
-      wf.toolVersion?.author || wf.config.authors.map((a) => a.github_account)
-    )
-  } else {
-    return wf.config.authors.map((a) => a.github_account)
-  }
+  return wf.config.authors.map((a) => a.github_account)
 }
 
 export const allAuthors = (state: RootState): string[] => {
@@ -37,35 +24,15 @@ export const allAuthors = (state: RootState): string[] => {
   return Array.from(authors)
 }
 
-export const extractWfName = (
-  wf: PublishedWorkflow | DraftWorkflow
-): string => {
-  if (isPublishedWorkflow(wf)) {
-    return wf.toolVersion?.name || wf.config.workflow.name
-  } else {
-    return wf.config.workflow.name
-  }
-}
-
 export const allWfNames = (state: RootState): string[] => {
   const wfNames = new Set<string>()
   Object.values(state.workflows.published).forEach((wf) => {
-    wfNames.add(extractWfName(wf))
+    wfNames.add(wf.config.workflow.name)
   })
   Object.values(state.workflows.draft).forEach((wf) => {
-    wfNames.add(extractWfName(wf))
+    wfNames.add(wf.config.workflow.name)
   })
   return Array.from(wfNames)
-}
-
-export const extractPublishStatus = (
-  wf: PublishedWorkflow | DraftWorkflow
-): 'published' | 'draft' => {
-  if (isPublishedWorkflow(wf)) {
-    return 'published'
-  } else {
-    return 'draft'
-  }
 }
 
 export interface PublishStatusCounts {
@@ -91,15 +58,7 @@ export type WfType = 'CWL' | 'WDL' | 'NFL' | 'SMK'
 export const extractWfType = (
   wf: PublishedWorkflow | DraftWorkflow
 ): WfType => {
-  if (isPublishedWorkflow(wf)) {
-    return (
-      (wf.toolVersion?.descriptor_type?.[0] as WfType) ||
-      wf.config.workflow.language?.type ||
-      'CWL'
-    )
-  } else {
-    return wf.config.workflow.language?.type || 'CWL'
-  }
+  return wf.config.workflow.language?.type || 'CWL'
 }
 
 export interface WfTypeCounts {
@@ -136,27 +95,11 @@ export const wfTypeCounts = (state: RootState): WfTypeCounts => {
   return wfTypeCounts
 }
 
-export const extractVersion = (
-  wf: PublishedWorkflow | DraftWorkflow
-): string => {
-  return wf.version
-}
-
 export const extractDate = (wf: PublishedWorkflow | DraftWorkflow): string => {
   if (isPublishedWorkflow(wf)) {
     return wf.modifiedDate
   } else {
     return wf.createdDate
-  }
-}
-
-export const extractConceptDoi = (
-  wf: PublishedWorkflow | DraftWorkflow
-): string | null => {
-  if (isPublishedWorkflow(wf)) {
-    return wf.config.zenodo?.concept_doi || null
-  } else {
-    return wf.config.zenodo?.concept_doi || null
   }
 }
 
@@ -180,7 +123,9 @@ export const compareWfName = (
   a: PublishedWorkflow | DraftWorkflow,
   b: PublishedWorkflow | DraftWorkflow
 ): number => {
-  return extractWfName(a).localeCompare(extractWfName(b))
+  const aWfName = a.config.workflow.name
+  const bWfName = b.config.workflow.name
+  return aWfName.localeCompare(bWfName)
 }
 
 export const compareDate = (
@@ -209,7 +154,7 @@ export const filteredWfs = (
     const wf = state.workflows.published[id] || state.workflows.draft[id]
     if (
       wfName.length &&
-      !extractWfName(wf).toLowerCase().includes(wfName.toLowerCase())
+      !wf.config.workflow.name.toLowerCase().includes(wfName.toLowerCase())
     ) {
       continue
     }
@@ -219,7 +164,7 @@ export const filteredWfs = (
     ) {
       continue
     }
-    if (!publishStatus.includes(extractPublishStatus(wf))) {
+    if (!publishStatus.includes(isPublished(wf) ? 'published' : 'draft')) {
       continue
     }
     if (extractWfType(wf) && !wfType.includes(extractWfType(wf))) {
