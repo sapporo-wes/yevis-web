@@ -146,9 +146,9 @@ export const getLastModifiedDate = async (
 ): Promise<string> => {
   const commits = await request('GET /repos/{owner}/{repo}/commits', {
     owner: wfRepo().split('/')[0],
-    repo: wfRepo().split('/')[1],
     path: `tools/${id}/versions/${version}/gh-trs-config.json`,
     per_page: 1,
+    repo: wfRepo().split('/')[1],
     sha: wfRepoGhPagesBranch(),
   })
   if (commits.data.length === 0) {
@@ -202,11 +202,11 @@ export const getPublishedWorkflows = async (): Promise<PublishedWorkflows> => {
   const publishedWorkflows: PublishedWorkflows = {}
   tools.forEach((tool, i) => {
     publishedWorkflows[tool.id] = {
-      tool,
-      version: latestIdVersions[i][1],
-      toolVersion: latestToolVersions[i],
       config: configs[tool.id],
       modifiedDate: modifiedDate[tool.id],
+      tool,
+      toolVersion: latestToolVersions[i],
+      version: latestIdVersions[i][1],
     }
   })
   return publishedWorkflows
@@ -229,11 +229,11 @@ export const getPublishedWorkflow = async (
   const config = await getGhTrsConfig(id, ver)
   const modifiedDate = await getLastModifiedDate(id, ver)
   return {
-    tool,
-    version: ver,
-    toolVersion,
     config,
     modifiedDate,
+    tool,
+    toolVersion,
+    version: ver,
   }
 }
 
@@ -257,8 +257,8 @@ export const getDraftConfigUrl = async (prId: number): Promise<string> => {
     'GET /repos/{owner}/{repo}/pulls/{pull_number}/files',
     {
       owner: wfRepo().split('/')[0],
-      repo: wfRepo().split('/')[1],
       pull_number: prId,
+      repo: wfRepo().split('/')[1],
     }
   )
   const configFile = files.data.find((file) =>
@@ -314,9 +314,9 @@ export const getDraftWorkflows = async (): Promise<DraftWorkflows> => {
     if (config !== null) {
       draftWorkflows[config.id] = {
         config,
-        version: config.version,
         createdDate: idDate[1],
         prId: idDate[0],
+        version: config.version,
       }
     }
   })
@@ -344,9 +344,9 @@ export const getDraftWorkflow = async (
         if (config.id === id) {
           return {
             config,
-            version: config.version,
             createdDate: date,
             prId,
+            version: config.version,
           }
         }
       } else {
@@ -358,9 +358,9 @@ export const getDraftWorkflow = async (
           if (config.id === id && config.version === version) {
             return {
               config,
-              version: config.version,
               createdDate: date,
               prId,
+              version: config.version,
             }
           }
         }

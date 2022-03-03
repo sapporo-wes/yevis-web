@@ -67,12 +67,12 @@ interface WorkflowsState {
 }
 
 const initialState: WorkflowsState = {
-  published: {},
-  publishedLoading: true,
-  publishedError: null,
   draft: {},
-  draftLoading: true,
   draftError: null,
+  draftLoading: true,
+  published: {},
+  publishedError: null,
+  publishedLoading: true,
 }
 
 export const fetchPublishedWorkflows = createAsyncThunk(
@@ -100,9 +100,6 @@ export const fetchDraftWorkflows = createAsyncThunk(
 )
 
 export const workflowsSlice = createSlice({
-  name: 'workflows',
-  initialState,
-  reducers: {},
   extraReducers: {
     [fetchPublishedWorkflows.pending.type]: (state) => {
       state.publishedLoading = true
@@ -144,6 +141,9 @@ export const workflowsSlice = createSlice({
       state.draftError = action.payload
     },
   },
+  initialState,
+  name: 'workflows',
+  reducers: {},
 })
 
 export default workflowsSlice.reducer

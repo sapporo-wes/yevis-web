@@ -48,8 +48,8 @@ export const publishStatusCounts = (state: RootState): PublishStatusCounts => {
   const allIdsLength = allIds.size
   const publishedLength = Object.keys(state.workflows.published).length
   return {
-    published: publishedLength,
     draft: allIdsLength - publishedLength,
+    published: publishedLength,
   }
 }
 
@@ -71,9 +71,9 @@ export interface WfTypeCounts {
 export const wfTypeCounts = (state: RootState): WfTypeCounts => {
   const wfTypeCounts = {
     CWL: 0,
-    WDL: 0,
     NFL: 0,
     SMK: 0,
+    WDL: 0,
   }
   const allIds = new Set([
     ...Object.keys(state.workflows.published),

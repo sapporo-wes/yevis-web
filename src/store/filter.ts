@@ -13,21 +13,17 @@ export interface FilterState {
 }
 
 const initialState: FilterState = {
-  wfName: '',
   authors: [],
   publishStatus: ['published', 'draft'],
-  wfType: ['CWL', 'WDL', 'NFL', 'SMK'],
   sortBy: 'date',
+  wfName: '',
+  wfType: ['CWL', 'WDL', 'NFL', 'SMK'],
 }
 
 export const filterSlice = createSlice({
-  name: 'filter',
   initialState,
+  name: 'filter',
   reducers: {
-    setWfName: (state, action: PayloadAction<FilterState['wfName']>) => {
-      state.wfName = action.payload
-    },
-
     setAuthors: (state, action: PayloadAction<FilterState['authors']>) => {
       state.authors = action.payload
     },
@@ -43,15 +39,6 @@ export const filterSlice = createSlice({
       }
     },
 
-    // multiple
-    setWfType: (state, action: PayloadAction<WfType>) => {
-      if (state.wfType.includes(action.payload)) {
-        state.wfType = state.wfType.filter((t) => t !== action.payload)
-      } else {
-        state.wfType.push(action.payload)
-      }
-    },
-
     setSortBy: (state, action: PayloadAction<SortType | null>) => {
       if (action.payload === null) {
         if (state.sortBy === 'date') {
@@ -61,6 +48,19 @@ export const filterSlice = createSlice({
         }
       } else {
         state.sortBy = action.payload
+      }
+    },
+
+    setWfName: (state, action: PayloadAction<FilterState['wfName']>) => {
+      state.wfName = action.payload
+    },
+
+    // multiple
+    setWfType: (state, action: PayloadAction<WfType>) => {
+      if (state.wfType.includes(action.payload)) {
+        state.wfType = state.wfType.filter((t) => t !== action.payload)
+      } else {
+        state.wfType.push(action.payload)
       }
     },
   },

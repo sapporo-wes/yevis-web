@@ -7,9 +7,9 @@ import WorkflowsReducer from '@/store/workflows'
 
 export const store = configureStore({
   reducer: {
-    workflows: WorkflowsReducer,
     filter: FilterReducer,
     workflow: WorkflowReducer,
+    workflows: WorkflowsReducer,
   },
 })
 

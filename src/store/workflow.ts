@@ -23,10 +23,10 @@ interface WorkflowState {
 }
 
 const initialState: WorkflowState = {
-  wf: null,
-  loading: true,
-  error: null,
   contents: {},
+  error: null,
+  loading: true,
+  wf: null,
 }
 
 export const fetchWorkflow = createAsyncThunk(
@@ -110,9 +110,6 @@ interface FetchContentMeta {
 }
 
 export const workflowSlice = createSlice({
-  name: 'workflow',
-  initialState,
-  reducers: {},
   extraReducers: {
     [fetchWorkflow.pending.type]: (state) => {
       state.loading = true
@@ -144,9 +141,9 @@ export const workflowSlice = createSlice({
         // initialize
         state.contents[action.meta.arg.name] = {
           content: '',
-          requestId: action.meta.requestId,
-          loading: true,
           error: null,
+          loading: true,
+          requestId: action.meta.requestId,
         }
       }
     },
@@ -180,6 +177,9 @@ export const workflowSlice = createSlice({
       }
     },
   },
+  initialState,
+  name: 'workflow',
+  reducers: {},
 })
 
 export default workflowSlice.reducer
