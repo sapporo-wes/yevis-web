@@ -25,12 +25,6 @@ const ContentBox: React.VFC<Props> = (props: Props) => {
     )
   }, [dispatch])
 
-  const readmeContent = contents.readme.loading
-    ? 'Loading README...'
-    : contents.readme.error
-      ? 'Error loading README'
-      : contents.readme.content
-
   return (
     <React.Fragment>
       <Box sx={{ borderBottom: 1, borderColor: 'divider', ...props.sx }}>
@@ -44,7 +38,11 @@ const ContentBox: React.VFC<Props> = (props: Props) => {
         </Tabs>
       </Box>
       {activeTab === 'readme' && 'readme' in contents && (
-        <MuiMarkdown children={readmeContent} sx={{ px: 2 }} />
+        <MuiMarkdown children={contents.readme.loading
+          ? 'Loading README...'
+          : contents.readme.error
+            ? 'Error loading README'
+            : contents.readme.content} sx={{ px: 2 }} />
       )}
       {activeTab === 'files' && <Box children={'files'} />}
     </React.Fragment>

@@ -26,14 +26,15 @@ const WfCards: React.VFC<Props> = (props: Props) => {
       {wfs.map((wf, i) => (
         <WfCard
           key={i}
-          sx={{
-            flexGrow: 1,
-            minWidth: (theme: Theme) =>
-              `calc((${theme.breakpoints.values.md}px - ${theme.spacing(
-                4 * 2 + 2
-              )}) / 2)`,
-            width: (theme: Theme) => `calc(50% - ${theme.spacing(1)})`,
-          }}
+          sx={(theme: Theme) => ({
+            [theme.breakpoints.down('md')]: {
+              flexGrow: 1,
+            },
+            minWidth: `calc((${theme.breakpoints.values.md}px - ${theme.spacing(
+              4 * 2 + 2
+            )}) / 2)`,
+            width: `calc(50% - ${theme.spacing(1)})`,
+          })}
           wf={wf}
         />
       ))}
