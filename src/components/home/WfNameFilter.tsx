@@ -3,22 +3,22 @@ import React from 'react'
 
 import { RootState, useAppDispatch, useAppSelector } from '@/store'
 import { setWfName } from '@/store/filter'
-import { allWfNames, disableFilter } from '@/store/getters'
+import { allWfNames } from '@/store/workflowsGetters'
 
 interface Props {
+  disabled: boolean
   sx?: object
 }
 
 const WfNameFilter: React.VFC<Props> = (props: Props) => {
-  const rootState = useAppSelector((state: RootState) => state)
+  const wfs = useAppSelector((state: RootState) => state.workflows.wfs)
   const dispatch = useAppDispatch()
-  const wfNames = allWfNames(rootState)
-  const disable = disableFilter(rootState)
+  const wfNames = allWfNames(wfs)
 
   return (
     <Autocomplete
       autoHighlight
-      disabled={disable}
+      disabled={props.disabled}
       freeSolo
       onInputChange={(_, value) => dispatch(setWfName(value))}
       options={wfNames}

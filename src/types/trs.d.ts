@@ -1,3 +1,5 @@
+/* eslint-disable typescript-sort-keys/interface */
+
 export type ServiceInfo = {
   id: string
   name: string

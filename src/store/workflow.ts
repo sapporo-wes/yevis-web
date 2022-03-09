@@ -8,26 +8,23 @@ import { DraftWorkflow, PublishedWorkflow } from '@/store/workflows'
 
 export interface FileContent {
   content: string
-  requestId: string
-  loading: boolean
   error: string | null
+  loading: boolean
+  requestId: string
 }
 
 interface WorkflowState {
-  wf: PublishedWorkflow | DraftWorkflow | null
-  loading: boolean
-  error: string | null
-  contents: {
-    [fileName: string]: FileContent
+  [id: string]: {
+    contents: {
+      [fileName: string]: FileContent
+    }
+    error: string | null
+    loading: boolean
+    wf: PublishedWorkflow | DraftWorkflow | null
   }
 }
 
-const initialState: WorkflowState = {
-  contents: {},
-  error: null,
-  loading: true,
-  wf: null,
-}
+const initialState: WorkflowState = {}
 
 export const fetchWorkflow = createAsyncThunk(
   'workflow/fetchWorkflow',

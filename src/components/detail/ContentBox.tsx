@@ -1,6 +1,7 @@
 import { Box, Tab, Tabs } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
+import Files from '@/components/detail/Files'
 import MuiMarkdown from '@/components/detail/MuiMarkdown'
 import { RootState, useAppDispatch, useAppSelector } from '@/store'
 import { fetchContent } from '@/store/workflow'
@@ -38,13 +39,18 @@ const ContentBox: React.VFC<Props> = (props: Props) => {
         </Tabs>
       </Box>
       {activeTab === 'readme' && 'readme' in contents && (
-        <MuiMarkdown children={contents.readme.loading
-          ? 'Loading README...'
-          : contents.readme.error
-            ? 'Error loading README'
-            : contents.readme.content} sx={{ px: 2 }} />
+        <MuiMarkdown
+          children={
+            contents.readme.loading
+              ? 'Loading README...'
+              : contents.readme.error
+              ? 'Error loading README'
+              : contents.readme.content
+          }
+          sx={{ mx: 2 }}
+        />
       )}
-      {activeTab === 'files' && <Box children={'files'} />}
+      {activeTab === 'files' && <Files sx={{ mt: 2, mx: 2 }} wf={props.wf} />}
     </React.Fragment>
   )
 }

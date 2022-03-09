@@ -3,15 +3,16 @@ import React from 'react'
 
 import WfCard from '@/components/home/WfCard'
 import { RootState, useAppSelector } from '@/store'
-import { filteredWfs } from '@/store/getters'
+import { filteredWfs } from '@/store/workflowsGetters'
 
 interface Props {
   sx?: object
 }
 
 const WfCards: React.VFC<Props> = (props: Props) => {
-  const rootState = useAppSelector((state: RootState) => state)
-  const wfs = filteredWfs(rootState)
+  const wfsState = useAppSelector((state: RootState) => state.workflows.wfs)
+  const filterState = useAppSelector((state: RootState) => state.filter)
+  const wfs = filteredWfs(wfsState, filterState)
 
   return (
     <Box

@@ -13,42 +13,31 @@ export const extractAuthors = (
   return wf.config.authors.map((a) => a.github_account)
 }
 
-export const allAuthors = (state: RootState): string[] => {
-  const authors = new Set<string>()
-  Object.values(state.workflows.published).forEach((wf) => {
-    extractAuthors(wf).forEach((a) => authors.add(a))
-  })
-  Object.values(state.workflows.draft).forEach((wf) => {
-    extractAuthors(wf).forEach((a) => authors.add(a))
-  })
-  return Array.from(authors)
+export const allAuthors = (wfs: RootState['workflows']['wfs']): string[] => {
+  return Array.from(
+    new Set(Object.values(wfs).flatMap((wf) => extractAuthors(wf)))
+  )
 }
 
-export const allWfNames = (state: RootState): string[] => {
-  const wfNames = new Set<string>()
-  Object.values(state.workflows.published).forEach((wf) => {
-    wfNames.add(wf.config.workflow.name)
-  })
-  Object.values(state.workflows.draft).forEach((wf) => {
-    wfNames.add(wf.config.workflow.name)
-  })
-  return Array.from(wfNames)
+export const allWfNames = (wfs: RootState['workflows']['wfs']): string[] => {
+  return Array.from(
+    new Set(Object.values(wfs).flatMap((wf) => wf.config.workflow.name))
+  )
 }
 
 export interface PublishStatusCounts {
-  published: number
   draft: number
+  published: number
 }
 
-export const publishStatusCounts = (state: RootState): PublishStatusCounts => {
-  const allIds = new Set([
-    ...Object.keys(state.workflows.published),
-    ...Object.keys(state.workflows.draft),
-  ])
-  const allIdsLength = allIds.size
-  const publishedLength = Object.keys(state.workflows.published).length
+export const publishStatusCounts = (
+  wfs: RootState['workflows']['wfs']
+): PublishStatusCounts => {
+  const publishedLength = Object.values(wfs).filter((wf) =>
+    isPublishedWorkflow(wf)
+  ).length
   return {
-    draft: allIdsLength - publishedLength,
+    draft: Object.keys(wfs).length - publishedLength,
     published: publishedLength,
   }
 }
@@ -63,44 +52,24 @@ export const extractWfType = (
 
 export interface WfTypeCounts {
   CWL: number
-  WDL: number
   NFL: number
   SMK: number
+  WDL: number
 }
 
-export const wfTypeCounts = (state: RootState): WfTypeCounts => {
+export const wfTypeCounts = (
+  wfs: RootState['workflows']['wfs']
+): WfTypeCounts => {
   const wfTypeCounts = {
     CWL: 0,
     NFL: 0,
     SMK: 0,
     WDL: 0,
   }
-  const allIds = new Set([
-    ...Object.keys(state.workflows.published),
-    ...Object.keys(state.workflows.draft),
-  ])
-  for (const id of allIds) {
-    const wf = state.workflows.published[id] || state.workflows.draft[id]
-    const type = extractWfType(wf)
-    if (type === 'CWL') {
-      wfTypeCounts.CWL += 1
-    } else if (type === 'WDL') {
-      wfTypeCounts.WDL += 1
-    } else if (type === 'NFL') {
-      wfTypeCounts.NFL += 1
-    } else if (type === 'SMK') {
-      wfTypeCounts.SMK += 1
-    }
-  }
+  Object.values(wfs).forEach((wf) => {
+    wfTypeCounts[extractWfType(wf)] += 1
+  })
   return wfTypeCounts
-}
-
-export const extractDate = (wf: PublishedWorkflow | DraftWorkflow): string => {
-  if (isPublishedWorkflow(wf)) {
-    return wf.modifiedDate
-  } else {
-    return wf.createdDate
-  }
 }
 
 export const isVerified = (wf: PublishedWorkflow | DraftWorkflow): boolean => {
@@ -132,8 +101,8 @@ export const compareDate = (
   a: PublishedWorkflow | DraftWorkflow,
   b: PublishedWorkflow | DraftWorkflow
 ): number => {
-  const aDate = dayjs(extractDate(a))
-  const bDate = dayjs(extractDate(b))
+  const aDate = dayjs(a.date)
+  const bDate = dayjs(b.date)
   if (aDate.isBefore(bDate)) {
     return 1
   } else if (aDate.isAfter(bDate)) {
@@ -144,36 +113,34 @@ export const compareDate = (
 }
 
 export const filteredWfs = (
-  state: RootState
+  wfs: RootState['workflows']['wfs'],
+  filter: RootState['filter']
 ): (PublishedWorkflow | DraftWorkflow)[] => {
-  const { wfName, authors, publishStatus, wfType, sortBy } = state.filter
-  const { published, draft } = state.workflows
-  const wfs: (PublishedWorkflow | DraftWorkflow)[] = []
-  const allIds = new Set([...Object.keys(published), ...Object.keys(draft)])
-  for (const id of allIds) {
-    const wf = state.workflows.published[id] || state.workflows.draft[id]
+  const { wfName, authors, publishStatus, wfType, sortBy } = filter
+
+  const filteredWfs = Object.values(wfs).filter((wf) => {
     if (
       wfName.length &&
       !wf.config.workflow.name.toLowerCase().includes(wfName.toLowerCase())
     ) {
-      continue
+      return false
     }
     if (
       authors.length &&
       !extractAuthors(wf).some((a) => authors.includes(a))
     ) {
-      continue
+      return false
     }
     if (!publishStatus.includes(isPublished(wf) ? 'published' : 'draft')) {
-      continue
+      return false
     }
     if (extractWfType(wf) && !wfType.includes(extractWfType(wf))) {
-      continue
+      return false
     }
-    wfs.push(wf)
-  }
+    return true
+  })
 
-  wfs.sort((a, b) => {
+  filteredWfs.sort((a, b) => {
     if (sortBy === 'name') {
       return compareWfName(a, b)
     } else if (sortBy === 'date') {
@@ -182,7 +149,7 @@ export const filteredWfs = (
     return 0
   })
 
-  return wfs
+  return filteredWfs
 }
 
 export const dateToTimeSince = (date: string) => {
@@ -210,22 +177,6 @@ export const dateToTimeSince = (date: string) => {
 }
 
 export const generateAgoStr = (wf: PublishedWorkflow | DraftWorkflow) => {
-  const date = extractDate(wf)
-  const timeSince = dateToTimeSince(date)
+  const timeSince = dateToTimeSince(wf.date)
   return `${isPublished(wf) ? 'Published' : 'Created'} ${timeSince}`
-}
-
-export const isLoading = (state: RootState): boolean => {
-  return state.workflows.publishedLoading || state.workflows.draftLoading
-}
-
-export const isError = (state: RootState): boolean => {
-  return (
-    state.workflows.publishedError !== null ||
-    state.workflows.draftError !== null
-  )
-}
-
-export const disableFilter = (state: RootState): boolean => {
-  return isLoading(state) || isError(state)
 }

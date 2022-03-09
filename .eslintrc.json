@@ -9,6 +9,7 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:import/recommended",
     "plugin:import/typescript",
+    "plugin:typescript-sort-keys/recommended",
     "prettier"
   ],
   "parser": "@typescript-eslint/parser",
@@ -19,18 +20,17 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["react", "@typescript-eslint", "sort-keys-fix"],
+  "plugins": [
+    "react",
+    "@typescript-eslint",
+    "sort-keys-fix",
+    "typescript-sort-keys"
+  ],
   "rules": {
-    "indent": [
-      "error",
-      2,
-      {
-        "flatTernaryExpressions": true
-      }
-    ],
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "single"],
     "semi": ["error", "never"],
+    "object-curly-spacing": ["error", "always"],
     "import/no-unresolved": "off",
     "import/order": [
       "error",

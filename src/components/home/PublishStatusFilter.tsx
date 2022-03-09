@@ -5,24 +5,24 @@ import React from 'react'
 
 import { RootState, useAppDispatch, useAppSelector } from '@/store'
 import { PublishStatus, setPublishStatus } from '@/store/filter'
-import { disableFilter, publishStatusCounts } from '@/store/getters'
+import { publishStatusCounts } from '@/store/workflowsGetters'
 
 interface Props {
+  disabled: boolean
   sx?: object
 }
 
 const PublishStatusFilter: React.VFC<Props> = (props: Props) => {
-  const rootState = useAppSelector((state: RootState) => state)
+  const wfs = useAppSelector((state: RootState) => state.workflows.wfs)
   const selectedStatus = useAppSelector(
     (state: RootState) => state.filter.publishStatus
   )
   const dispatch = useAppDispatch()
-  const counts = publishStatusCounts(rootState)
-  const disable = disableFilter(rootState)
+  const counts = publishStatusCounts(wfs)
 
   return (
     <ToggleButtonGroup
-      disabled={disable}
+      disabled={props.disabled}
       exclusive
       onChange={(_, value) =>
         dispatch(setPublishStatus(value as PublishStatus))

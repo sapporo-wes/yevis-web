@@ -23,8 +23,8 @@ const wfTypeToSrc = (wfType: WfType): string => {
 }
 
 interface Props {
-  wfType: WfType
   sx?: object
+  wfType: WfType
 }
 const WfTypeAvatar: React.VFC<Props> = (props: Props) => {
   return props.wfType ? (

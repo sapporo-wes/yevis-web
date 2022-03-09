@@ -8,12 +8,7 @@ interface Props {
 }
 
 const ErrorMsg: React.VFC<Props> = (props: Props) => {
-  const publishedError = useAppSelector(
-    (state: RootState) => state.workflows.publishedError
-  )
-  const draftError = useAppSelector(
-    (state: RootState) => state.workflows.draftError
-  )
+  const error = useAppSelector((state: RootState) => state.workflows.error)
   return (
     <Box
       component='p'
@@ -21,17 +16,7 @@ const ErrorMsg: React.VFC<Props> = (props: Props) => {
         fontSize: '1.2rem',
         ...props.sx,
       }}>
-      An unexpected error occurred while loading workflows:
-      {publishedError !== null && (
-        <>
-          <br />- Error while loading published workflows: {publishedError}
-        </>
-      )}
-      {draftError !== null && (
-        <>
-          <br />- Error while loading draft workflows: {draftError}
-        </>
-      )}
+      An unexpected error occurred while loading workflows: {error}
     </Box>
   )
 }

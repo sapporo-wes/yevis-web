@@ -5,11 +5,11 @@ export type WfType = 'CWL' | 'WDL' | 'NFL' | 'SMK'
 export type SortType = 'name' | 'date'
 
 export interface FilterState {
-  wfName: string
   authors: string[]
   publishStatus: PublishStatus[]
-  wfType: WfType[]
   sortBy: SortType
+  wfName: string
+  wfType: WfType[]
 }
 
 const initialState: FilterState = {

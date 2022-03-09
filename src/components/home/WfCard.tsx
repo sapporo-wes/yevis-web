@@ -7,18 +7,18 @@ import { Link as RouterLink } from 'react-router-dom'
 import Authors from '@/components/home/Authors'
 import DoiBadge from '@/components/home/DoiBadge'
 import WfTypeAvatar from '@/components/WfTypeAvatar'
+import { DraftWorkflow, PublishedWorkflow } from '@/store/workflows'
 import {
   extractAuthors,
   extractWfType,
   generateAgoStr,
   isPublished,
   isVerified,
-} from '@/store/getters'
-import { DraftWorkflow, PublishedWorkflow } from '@/store/workflows'
+} from '@/store/workflowsGetters'
 
 interface Props {
-  wf: PublishedWorkflow | DraftWorkflow
   sx?: object
+  wf: PublishedWorkflow | DraftWorkflow
 }
 
 const WfCard: React.VFC<Props> = (props: Props) => {

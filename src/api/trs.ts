@@ -189,7 +189,6 @@ export const extractVersion = (toolVersion: ToolVersion): string => {
 }
 
 export const getPublishedWorkflows = async (): Promise<PublishedWorkflows> => {
-  await isGhTrs()
   const tools = await getTools()
   const latestToolVersions = tools.map((tool) => latestVersion(tool))
   const latestIdVersions: [string, string][] = latestToolVersions.map(
@@ -203,8 +202,7 @@ export const getPublishedWorkflows = async (): Promise<PublishedWorkflows> => {
   tools.forEach((tool, i) => {
     publishedWorkflows[tool.id] = {
       config: configs[tool.id],
-      modifiedDate: modifiedDate[tool.id],
-      tool,
+      date: modifiedDate[tool.id],
       toolVersion: latestToolVersions[i],
       version: latestIdVersions[i][1],
     }
@@ -216,7 +214,6 @@ export const getPublishedWorkflow = async (
   id: string,
   version?: string
 ): Promise<PublishedWorkflow> => {
-  await isGhTrs()
   const tool = await getTool(id)
   const [toolVersion, ver] = await (async () => {
     if (typeof version === 'undefined') {
@@ -227,11 +224,10 @@ export const getPublishedWorkflow = async (
     }
   })()
   const config = await getGhTrsConfig(id, ver)
-  const modifiedDate = await getLastModifiedDate(id, ver)
+  const date = await getLastModifiedDate(id, ver)
   return {
     config,
-    modifiedDate,
-    tool,
+    date,
     toolVersion,
     version: ver,
   }
@@ -294,7 +290,6 @@ export const getConfigFromRawUrl = async (
 }
 
 export const getDraftWorkflows = async (): Promise<DraftWorkflows> => {
-  await isGhTrs()
   const prIdDates = await getPullRequestIdDates()
   const configUrlResults = await Promise.allSettled(
     prIdDates.map((idDate) => getDraftConfigUrl(idDate[0]))
@@ -314,7 +309,7 @@ export const getDraftWorkflows = async (): Promise<DraftWorkflows> => {
     if (config !== null) {
       draftWorkflows[config.id] = {
         config,
-        createdDate: idDate[1],
+        date: idDate[1],
         prId: idDate[0],
         version: config.version,
       }
@@ -327,7 +322,6 @@ export const getDraftWorkflow = async (
   id: string,
   version?: string
 ): Promise<DraftWorkflow> => {
-  await isGhTrs()
   const prIdDates = await getPullRequestIdDates()
   for (const [prId, date] of prIdDates) {
     /// https://github.com/ddbj/yevis-workflows-dev/raw/68b0c0d92505c93a37d4b4d7180136d785f631bb/1fdc5861-c146-40f5-bb76-bcb5955cee11/yevis-config-1.0.0.yml
@@ -344,7 +338,7 @@ export const getDraftWorkflow = async (
         if (config.id === id) {
           return {
             config,
-            createdDate: date,
+            date: date,
             prId,
             version: config.version,
           }
@@ -358,7 +352,7 @@ export const getDraftWorkflow = async (
           if (config.id === id && config.version === version) {
             return {
               config,
-              createdDate: date,
+              date: date,
               prId,
               version: config.version,
             }

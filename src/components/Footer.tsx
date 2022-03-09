@@ -6,7 +6,6 @@ const Footer: React.VFC = () => {
   return (
     <Box component='footer' sx={{ height: '35px', pb: 2, textAlign: 'center' }}>
       <Box
-        // align='center'
         children={`© ${dayjs().format(
           'YYYY'
         )} - ${__APP_NAME__} ${__APP_VERSION__}`}

@@ -4,24 +4,24 @@ import React from 'react'
 import WfTypeAvatar from '@/components/WfTypeAvatar'
 import { RootState, useAppDispatch, useAppSelector } from '@/store'
 import { setWfType, WfType } from '@/store/filter'
-import { disableFilter, wfTypeCounts } from '@/store/getters'
+import { wfTypeCounts } from '@/store/workflowsGetters'
 
 interface Props {
+  disabled: boolean
   sx?: object
 }
 
 const WfTypeFilter: React.VFC<Props> = (props: Props) => {
-  const rootState = useAppSelector((state: RootState) => state)
   const selectedWfType = useAppSelector(
     (state: RootState) => state.filter.wfType
   )
+  const wfs = useAppSelector((state: RootState) => state.workflows.wfs)
+  const counts = wfTypeCounts(wfs)
   const dispatch = useAppDispatch()
-  const counts = wfTypeCounts(rootState)
-  const disable = disableFilter(rootState)
 
   return (
     <ToggleButtonGroup
-      disabled={disable}
+      disabled={props.disabled}
       exclusive
       onChange={(_, value) => dispatch(setWfType(value as WfType))}
       size='small'

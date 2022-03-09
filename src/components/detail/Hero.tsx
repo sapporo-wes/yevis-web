@@ -8,12 +8,16 @@ import { Link as RouterLink } from 'react-router-dom'
 
 import WfTypeAvatar from '@/components/WfTypeAvatar'
 import { wfRepo } from '@/envDefault'
-import { extractWfType, isPublished, isVerified } from '@/store/getters'
 import { DraftWorkflow, PublishedWorkflow } from '@/store/workflows'
+import {
+  extractWfType,
+  isPublished,
+  isVerified,
+} from '@/store/workflowsGetters'
 
 interface Props {
-  wf: PublishedWorkflow | DraftWorkflow
   sx?: object
+  wf: PublishedWorkflow | DraftWorkflow
 }
 
 const Hero: React.VFC<Props> = (props: Props) => {

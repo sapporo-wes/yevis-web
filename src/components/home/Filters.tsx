@@ -5,12 +5,16 @@ import PublishStatusFilter from '@/components/home/PublishStatusFilter'
 import SortBy from '@/components/home/SortBy'
 import WfNameFilter from '@/components/home/WfNameFilter'
 import WfTypeFilter from '@/components/home/WfTypeFilter'
+import { RootState, useAppSelector } from '@/store'
 
 interface Props {
   sx?: object
 }
 
 const Filters: React.VFC<Props> = (props: Props) => {
+  const workflows = useAppSelector((state: RootState) => state.workflows)
+  const disabled = workflows.loading || workflows.error !== null
+
   return (
     <Box
       sx={{
@@ -33,11 +37,13 @@ const Filters: React.VFC<Props> = (props: Props) => {
             )}) / 2)`,
         }}>
         <WfNameFilter
+          disabled={disabled}
           sx={{
             flexGrow: 1,
           }}
         />
         <PublishStatusFilter
+          disabled={disabled}
           sx={{
             minWidth: '260px',
           }}
@@ -55,11 +61,13 @@ const Filters: React.VFC<Props> = (props: Props) => {
             )}) / 2)`,
         }}>
         <WfTypeFilter
+          disabled={disabled}
           sx={{
             flexGrow: 1,
           }}
         />
         <SortBy
+          disabled={disabled}
           sx={{
             maxWidth: '80px',
             minWidth: '80px',

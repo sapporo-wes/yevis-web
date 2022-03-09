@@ -3,22 +3,22 @@ import React from 'react'
 
 import { RootState, useAppDispatch, useAppSelector } from '@/store'
 import { setAuthors } from '@/store/filter'
-import { allAuthors, disableFilter } from '@/store/getters'
+import { allAuthors } from '@/store/workflowsGetters'
 
 interface Props {
+  disabled: boolean
   sx?: object
 }
 
 const AuthorsFilter: React.VFC<Props> = (props: Props) => {
-  const rootState = useAppSelector((state: RootState) => state)
+  const wfs = useAppSelector((state: RootState) => state.workflows.wfs)
   const dispatch = useAppDispatch()
-  const authors = allAuthors(rootState)
-  const disable = disableFilter(rootState)
+  const authors = allAuthors(wfs)
 
   return (
     <Autocomplete
       autoHighlight
-      disabled={disable}
+      disabled={props.disabled}
       multiple
       onChange={(_, value) => dispatch(setAuthors(value))}
       options={authors}
