@@ -47,7 +47,7 @@ export type WfType = 'CWL' | 'WDL' | 'NFL' | 'SMK'
 export const extractWfType = (
   wf: PublishedWorkflow | DraftWorkflow
 ): WfType => {
-  return wf.config.workflow.language?.type || 'CWL'
+  return wf.config.workflow.language.type || 'CWL'
 }
 
 export interface WfTypeCounts {

@@ -40,7 +40,7 @@ export const isDraftWorkflow = (
   return typeof (wf as PublishedWorkflow).toolVersion === 'undefined'
 }
 
-interface WorkflowsState {
+export interface WorkflowsState {
   error: string | null
   loading: boolean
   requestId: string | null
@@ -59,8 +59,8 @@ const initialState: WorkflowsState = {
 export const fetchWfs = createAsyncThunk(
   'workflows/fetchWfs',
   async (_, { fulfillWithValue, rejectWithValue, getState, requestId }) => {
-    const state = getState() as RootState
-    if (state.workflows.requestId !== requestId) {
+    const wfsState = (getState() as RootState).workflows as WorkflowsState
+    if (wfsState.requestId !== requestId) {
       return rejectWithValue('Already fetched')
     }
 

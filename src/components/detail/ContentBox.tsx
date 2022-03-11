@@ -4,27 +4,26 @@ import React, { useEffect, useState } from 'react'
 import Files from '@/components/detail/Files'
 import MuiMarkdown from '@/components/detail/MuiMarkdown'
 import { RootState, useAppDispatch, useAppSelector } from '@/store'
-import { fetchContent } from '@/store/workflow'
 import { DraftWorkflow, PublishedWorkflow } from '@/store/workflows'
 
 interface Props {
-  wf: PublishedWorkflow | DraftWorkflow
   sx?: object
+  wf: PublishedWorkflow | DraftWorkflow
 }
 
 const ContentBox: React.VFC<Props> = (props: Props) => {
   const contents = useAppSelector((state: RootState) => state.workflow.contents)
-  const dispatch = useAppDispatch()
+  // const dispatch = useAppDispatch()
   const [activeTab, setActiveTab] = useState('readme')
 
-  useEffect(() => {
-    dispatch(
-      fetchContent({
-        name: 'readme',
-        url: props.wf.config.workflow.readme,
-      })
-    )
-  }, [dispatch])
+  // useEffect(() => {
+  //   dispatch(
+  //     fetchContent({
+  //       name: 'readme',
+  //       url: props.wf.config.workflow.readme,
+  //     })
+  //   )
+  // }, [dispatch])
 
   return (
     <React.Fragment>

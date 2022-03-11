@@ -8,23 +8,23 @@ import { Link as RouterLink } from 'react-router-dom'
 
 import WfTypeAvatar from '@/components/WfTypeAvatar'
 import { wfRepo } from '@/envDefault'
-import { DraftWorkflow, PublishedWorkflow } from '@/store/workflows'
+import { WfVersion } from '@/store/workflow'
 import {
   extractWfType,
-  isPublished,
   isVerified,
+  isPublished,
 } from '@/store/workflowsGetters'
 
 interface Props {
   sx?: object
-  wf: PublishedWorkflow | DraftWorkflow
+  wfVersion: WfVersion
 }
 
 const Hero: React.VFC<Props> = (props: Props) => {
-  const wfName = props.wf.config.workflow.name
-  const wfType = extractWfType(props.wf)
-  const verified = isVerified(props.wf)
-  const published = isPublished(props.wf)
+  const wfName = props.wfVersion.wf?.config?.workflow?.name ?? ''
+  const wfType = props.wfVersion.wf ? extractWfType(props.wfVersion.wf) : null
+  const verified = props.wfVersion.wf ? isVerified(props.wfVersion.wf) : null
+  const published = props.wfVersion.wf ? isPublished(props.wfVersion.wf) : null
 
   return (
     <Box
@@ -72,10 +72,12 @@ const Hero: React.VFC<Props> = (props: Props) => {
             </Stack>
           </Link>
           <Stack direction='row' spacing={2} sx={{ alignItems: 'center' }}>
-            <WfTypeAvatar
-              sx={{ height: '3rem', width: '3rem' }}
-              wfType={wfType}
-            />
+            {wfType ? (
+              <WfTypeAvatar
+                sx={{ height: '3rem', width: '3rem' }}
+                wfType={wfType}
+              />
+            ) : null}
             <Box
               children={`${wfName}`}
               component='h1'

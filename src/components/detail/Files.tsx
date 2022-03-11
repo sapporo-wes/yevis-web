@@ -10,19 +10,19 @@ import { DraftWorkflow, PublishedWorkflow } from '@/store/workflows'
 import { File } from '@/types/ghTrs'
 
 interface Item {
-  itemType: 'file' | 'dir'
-  url?: string
+  children?: Item[]
   id: string
+  itemType: 'file' | 'dir'
   label: string
   type?: 'primary' | 'secondary'
-  children?: Item[]
+  url?: string
 }
 
 const extractItems = (files: File[], parent: string): Item[] => {
   const items: Item[] = []
   const dirs: Record<string, File[]> = {}
   files.forEach((file) => {
-    const parts = (file?.target || '').split('/')
+    const parts = (file.target || '').split('/')
     if (parts.length > 1) {
       // dir
       if (!(parts[0] in dirs)) {
@@ -36,9 +36,9 @@ const extractItems = (files: File[], parent: string): Item[] => {
     } else {
       // file
       items.push({
-        id: `${parent}/${file?.target || ''}`.replace(/^\/+|\/$/g, ''),
+        id: `${parent}/${file.target || ''}`.replace(/^\/+|\/$/g, ''),
         itemType: 'file',
-        label: file?.target || '',
+        label: file.target || '',
         type: file.type,
         url: file.url,
       })
@@ -69,7 +69,7 @@ const TreeItems: React.VFC<TreeItemsProps> = (props: TreeItemsProps) => {
         return (
           <TreeItem
             children={
-              item?.children ? <TreeItems items={item.children} /> : null
+              item.children ? <TreeItems items={item.children} /> : null
             }
             key={item.id}
             label={
@@ -128,8 +128,8 @@ const TreeItems: React.VFC<TreeItemsProps> = (props: TreeItemsProps) => {
 }
 
 interface Props {
-  wf: PublishedWorkflow | DraftWorkflow
   sx?: object
+  wf: PublishedWorkflow | DraftWorkflow
 }
 
 const Files: React.VFC<Props> = (props: Props) => {

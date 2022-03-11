@@ -7,9 +7,9 @@ import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
 
 const HeadComponent: React.VFC<{
-  level: number
   children: React.ReactNode
-}> = ({ level, children }: { level: number; children: React.ReactNode }) => {
+  level: number
+}> = ({ level, children }: { children: React.ReactNode; level: number }) => {
   return (
     <Box
       children={children}

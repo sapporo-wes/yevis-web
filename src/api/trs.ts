@@ -3,6 +3,7 @@ import yaml from 'js-yaml'
 import semver from 'semver'
 
 import { trsEndpoint, wfRepo, wfRepoGhPagesBranch } from '@/envDefault'
+import { PublishStatus } from '@/store/filter'
 import {
   DraftWorkflow,
   DraftWorkflows,
@@ -29,11 +30,11 @@ export const getServiceInfo = async (): Promise<ServiceInfo> => {
 
 export const isGhTrs = async (): Promise<void> => {
   const serviceInfo = await getServiceInfo()
-  const artifact = serviceInfo?.type?.artifact
+  const artifact = serviceInfo.type.artifact
   if (!artifact) {
     throw new Error('Failed to get artifact from service-info')
   }
-  const version = serviceInfo?.type?.version
+  const version = serviceInfo.type.version
   if (!version) {
     throw new Error('Failed to get version from service-info')
   }
@@ -125,7 +126,8 @@ export const getGhTrsConfig = async (
   return await res.json()
 }
 
-// { id: Config }
+// params: [id, version][]
+// return: { `${id}_${version}`: Config }
 export const getGhTrsConfigs = async (
   idVersions: [string, string][]
 ): Promise<Record<string, Config>> => {
@@ -134,7 +136,7 @@ export const getGhTrsConfigs = async (
     idVersions.map(([id, version]) => getGhTrsConfig(id, version))
   )
   results.forEach((config) => {
-    configs[config.id] = config
+    configs[`${config.id}_${config.version}`] = config
   })
   return configs
 }
@@ -154,14 +156,15 @@ export const getLastModifiedDate = async (
   if (commits.data.length === 0) {
     throw new Error(`Failed to get last modified date of ${id}_${version}`)
   }
-  const date = commits.data[0].commit.committer?.date || null
+  const date = commits.data[0].commit.committer.date || null
   if (date === null) {
     throw new Error(`Failed to get last modified date of ${id}_${version}`)
   }
   return date
 }
 
-// { id: date }
+// params: [id, version][]
+// return: { `${id}_${version}`: dateStr }
 export const getLastModifiedDates = async (
   idVersions: [string, string][]
 ): Promise<Record<string, string>> => {
@@ -170,12 +173,12 @@ export const getLastModifiedDates = async (
     idVersions.map(([id, version]) => getLastModifiedDate(id, version))
   )
   results.forEach((date, i) => {
-    dates[idVersions[i][0]] = date
+    dates[`${idVersions[i][0]}_${idVersions[i][1]}`] = date
   })
   return dates
 }
 
-export const latestVersion = (tool: Tool): ToolVersion => {
+export const latestToolVersion = (tool: Tool): ToolVersion => {
   const sortedTools = tool.versions.sort((a, b) => {
     const aVer = a.url.split('/').pop() || '0.0.0'
     const bVer = b.url.split('/').pop() || '0.0.0'
@@ -184,15 +187,15 @@ export const latestVersion = (tool: Tool): ToolVersion => {
   return sortedTools[sortedTools.length - 1]
 }
 
-export const extractVersion = (toolVersion: ToolVersion): string => {
+export const extractVersionStr = (toolVersion: ToolVersion): string => {
   return toolVersion.url.split('/').pop() || ''
 }
 
 export const getPublishedWorkflows = async (): Promise<PublishedWorkflows> => {
   const tools = await getTools()
-  const latestToolVersions = tools.map((tool) => latestVersion(tool))
+  const latestToolVersions = tools.map((tool) => latestToolVersion(tool))
   const latestIdVersions: [string, string][] = latestToolVersions.map(
-    (toolVersion) => [toolVersion.id, extractVersion(toolVersion)]
+    (toolVersion) => [toolVersion.id, extractVersionStr(toolVersion)]
   )
   const [configs, modifiedDate] = await Promise.all([
     getGhTrsConfigs(latestIdVersions),
@@ -200,9 +203,11 @@ export const getPublishedWorkflows = async (): Promise<PublishedWorkflows> => {
   ])
   const publishedWorkflows: PublishedWorkflows = {}
   tools.forEach((tool, i) => {
+    const id = tool.id
+    const version = latestIdVersions[i][1]
     publishedWorkflows[tool.id] = {
-      config: configs[tool.id],
-      date: modifiedDate[tool.id],
+      config: configs[`${id}_${version}`],
+      date: modifiedDate[`${id}_${version}`],
       toolVersion: latestToolVersions[i],
       version: latestIdVersions[i][1],
     }
@@ -210,45 +215,44 @@ export const getPublishedWorkflows = async (): Promise<PublishedWorkflows> => {
   return publishedWorkflows
 }
 
-export const getPublishedWorkflow = async (
-  id: string,
-  version?: string
-): Promise<PublishedWorkflow> => {
-  const tool = await getTool(id)
-  const [toolVersion, ver] = await (async () => {
-    if (typeof version === 'undefined') {
-      const toolVersion = latestVersion(tool)
-      return [toolVersion, extractVersion(toolVersion)]
-    } else {
-      return [await getToolVersion(id, version), version]
-    }
-  })()
-  const config = await getGhTrsConfig(id, ver)
-  const date = await getLastModifiedDate(id, ver)
-  return {
-    config,
-    date,
-    toolVersion,
-    version: ver,
-  }
+interface PRInfo {
+  date: string
+  id: string
+  prId: number
+  version: string
 }
 
 // https://docs.github.com/ja/rest/reference/pulls#list-pull-requests
-// return [prId, createdAt][]
-export const getPullRequestIdDates = async (): Promise<[number, string][]> => {
+// title example: 'Add workflow, id: aa1017e7-a11e-46d9-8156-2724e31915bb version: 1.0.0'
+export const getPullRequests = async (): Promise<PRInfo[]> => {
   const pullRequests = await request('GET /repos/{owner}/{repo}/pulls', {
     owner: wfRepo().split('/')[0],
     repo: wfRepo().split('/')[1],
     state: 'open',
   })
-  return pullRequests.data
-    .filter((pr) => pr.title.includes('Add'))
-    .map((pr) => [pr.number, pr.created_at])
+  const titleExpr = /^Add workflow, id: ((\w|-)+) version: ((\d|\.)+)$/
+  const prInfos = pullRequests.data
+    .map((pr) => {
+      const title = pr.title
+      const match = title.match(titleExpr)
+      if (match === null) {
+        return null
+      }
+      return {
+        date: pr.updated_at,
+        id: match[1],
+        prId: pr.number,
+        version: match[3],
+      }
+    })
+    .filter((prInfo) => prInfo !== null) as PRInfo[]
+  return prInfos
 }
 
 // https://docs.github.com/ja/rest/reference/pulls#list-pull-requests-files
-// return example: https://github.com/ddbj/yevis-workflows-dev/raw/68b0c0d92505c93a37d4b4d7180136d785f631bb/1fdc5861-c146-40f5-bb76-bcb5955cee11/yevis-config-1.0.0.yml
-export const getDraftConfigUrl = async (prId: number): Promise<string> => {
+// draft raw url example: https://github.com/ddbj/yevis-workflows-dev/raw/68b0c0d92505c93a37d4b4d7180136d785f631bb/1fdc5861-c146-40f5-bb76-bcb5955cee11/yevis-config-1.0.0.yml
+// raw url example: https://raw.githubusercontent.com/ddbj/yevis-workflows-dev/68b0c0d92505c93a37d4b4d7180136d785f631bb/1fdc5861-c146-40f5-bb76-bcb5955cee11/yevis-config-1.0.0.yml
+export const getConfigFromPr = async (prId: number): Promise<Config> => {
   const files = await request(
     'GET /repos/{owner}/{repo}/pulls/{pull_number}/files',
     {
@@ -263,26 +267,14 @@ export const getDraftConfigUrl = async (prId: number): Promise<string> => {
   if (typeof configFile === 'undefined') {
     throw new Error(`Failed to get draft config url of ${prId}`)
   }
-  return configFile.raw_url
-}
-
-// url example: https://github.com/ddbj/yevis-workflows-dev/raw/68b0c0d92505c93a37d4b4d7180136d785f631bb/1fdc5861-c146-40f5-bb76-bcb5955cee11/yevis-config-1.0.0.yml
-// rawUrl example: https://raw.githubusercontent.com/ddbj/yevis-workflows-dev/68b0c0d92505c93a37d4b4d7180136d785f631bb/1fdc5861-c146-40f5-bb76-bcb5955cee11/yevis-config-1.0.0.yml
-export const getConfigFromRawUrl = async (
-  url: string | null
-): Promise<Config> => {
-  if (url === null) {
-    throw new Error('Failed to get config from raw url because url is null')
-  }
-  const rawUrl = url
+  const draftRawUrl = configFile.raw_url
+  const rawUrl = draftRawUrl
     .replace('github.com', 'raw.githubusercontent.com')
     .replace('/raw/', '/')
-  const res = await fetch(rawUrl, {
-    method: 'GET',
-  })
+  const res = await fetch(rawUrl, { method: 'GET' })
   if (!res.ok) {
     throw new Error(
-      `Failed to get config from ${url} with error: ${res.status} ${res.statusText}`
+      `Failed to get config from ${rawUrl} with error: ${res.status} ${res.statusText}`
     )
   }
   const config = yaml.load(await res.text()) as Config
@@ -290,27 +282,18 @@ export const getConfigFromRawUrl = async (
 }
 
 export const getDraftWorkflows = async (): Promise<DraftWorkflows> => {
-  const prIdDates = await getPullRequestIdDates()
-  const configUrlResults = await Promise.allSettled(
-    prIdDates.map((idDate) => getDraftConfigUrl(idDate[0]))
-  )
-  const configUrls = configUrlResults.map((res) =>
-    res.status === 'fulfilled' ? res.value : null
-  )
+  const prs = await getPullRequests()
   const configResults = await Promise.allSettled(
-    configUrls.map((url) => getConfigFromRawUrl(url))
-  )
-  const configs = configResults.map((res) =>
-    res.status === 'fulfilled' ? res.value : null
+    prs.map((pr) => getConfigFromPr(pr.prId))
   )
   const draftWorkflows: DraftWorkflows = {}
-  prIdDates.forEach((idDate, i) => {
-    const config = configs[i]
-    if (config !== null) {
-      draftWorkflows[config.id] = {
+  prs.forEach((pr, i) => {
+    if (configResults[i].status === 'fulfilled') {
+      const config = (configResults[i] as PromiseFulfilledResult<Config>).value
+      draftWorkflows[pr.id] = {
         config,
-        date: idDate[1],
-        prId: idDate[0],
+        date: pr.date,
+        prId: pr.prId,
         version: config.version,
       }
     }
@@ -318,48 +301,52 @@ export const getDraftWorkflows = async (): Promise<DraftWorkflows> => {
   return draftWorkflows
 }
 
+export const getAllVersions = async (
+  id: string
+): Promise<[string, PublishStatus][]> => {
+  const [tool, prs] = await Promise.all([getTool(id), getPullRequests()])
+  const results: [string, PublishStatus][] = tool.versions.map((tVer) => [
+    extractVersionStr(tVer),
+    'published',
+  ])
+  const pr = prs.find((pr) => pr.id === id)
+  if (typeof pr !== 'undefined') {
+    results.push([pr.version, 'draft'])
+  }
+  return results
+}
+
+export const getPublishedWorkflow = async (
+  id: string,
+  version: string
+): Promise<PublishedWorkflow> => {
+  const [toolVersion, config, modifiedDate] = await Promise.all([
+    getToolVersion(id, version),
+    getGhTrsConfig(id, version),
+    getLastModifiedDate(id, version),
+  ])
+  return {
+    config,
+    date: modifiedDate,
+    toolVersion,
+    version,
+  }
+}
+
 export const getDraftWorkflow = async (
   id: string,
-  version?: string
+  version: string
 ): Promise<DraftWorkflow> => {
-  const prIdDates = await getPullRequestIdDates()
-  for (const [prId, date] of prIdDates) {
-    /// https://github.com/ddbj/yevis-workflows-dev/raw/68b0c0d92505c93a37d4b4d7180136d785f631bb/1fdc5861-c146-40f5-bb76-bcb5955cee11/yevis-config-1.0.0.yml
-    const url = await getDraftConfigUrl(prId).catch(() => null)
-    if (url === null) {
-      continue
-    }
-    if (url.includes(id.toString())) {
-      if (typeof version === 'undefined') {
-        const config = await getConfigFromRawUrl(url).catch(() => null)
-        if (config === null) {
-          continue
-        }
-        if (config.id === id) {
-          return {
-            config,
-            date: date,
-            prId,
-            version: config.version,
-          }
-        }
-      } else {
-        if (url.includes(`yevis-config-${version}.yml`)) {
-          const config = await getConfigFromRawUrl(url).catch(() => null)
-          if (config === null) {
-            continue
-          }
-          if (config.id === id && config.version === version) {
-            return {
-              config,
-              date: date,
-              prId,
-              version: config.version,
-            }
-          }
-        }
-      }
-    }
+  const prs = await getPullRequests()
+  const pr = prs.find((pr) => pr.id === id && pr.version === version)
+  if (typeof pr === 'undefined') {
+    throw new Error(`Failed to get draft workflow of ${id}_${version}`)
   }
-  throw new Error(`Failed to get draft workflow ${id}`)
+  const config = await getConfigFromPr(pr.prId)
+  return {
+    config,
+    date: pr.date,
+    prId: pr.prId,
+    version,
+  }
 }

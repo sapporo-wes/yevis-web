@@ -4,8 +4,8 @@ import React from 'react'
 import { DraftWorkflow, PublishedWorkflow } from '@/store/workflows'
 
 interface Props {
-  wf: PublishedWorkflow | DraftWorkflow
   sx?: object
+  wf: PublishedWorkflow | DraftWorkflow
 }
 
 const InfoBox: React.VFC<Props> = (props: Props) => {
