@@ -53,7 +53,7 @@ const WfCard: React.VFC<Props> = (props: Props) => {
                 fontSize: '1.2rem',
                 fontWeight: 'bold',
               }}
-              to={`workflows/${config.id}`}
+              to={`workflows/${config.id}/versions/${config.version}`}
               underline='hover'
             />
             {verified ? (
