@@ -6,60 +6,11 @@ import { TreeView, TreeItem, treeItemClasses } from '@mui/lab'
 import { Chip, Box, Theme } from '@mui/material'
 import React from 'react'
 
-import { DraftWorkflow, PublishedWorkflow } from '@/store/workflows'
-import { File } from '@/types/ghTrs'
-
-interface Item {
-  children?: Item[]
-  id: string
-  itemType: 'file' | 'dir'
-  label: string
-  type?: 'primary' | 'secondary'
-  url?: string
-}
-
-const extractItems = (files: File[], parent: string): Item[] => {
-  const items: Item[] = []
-  const dirs: Record<string, File[]> = {}
-  files.forEach((file) => {
-    const parts = (file.target || '').split('/')
-    if (parts.length > 1) {
-      // dir
-      if (!(parts[0] in dirs)) {
-        dirs[parts[0]] = []
-      }
-      dirs[parts[0]].push({
-        target: parts.slice(1).join('/'),
-        type: file.type,
-        url: file.url,
-      })
-    } else {
-      // file
-      items.push({
-        id: `${parent}/${file.target || ''}`.replace(/^\/+|\/$/g, ''),
-        itemType: 'file',
-        label: file.target || '',
-        type: file.type,
-        url: file.url,
-      })
-    }
-  })
-  Object.keys(dirs).forEach((dir) => {
-    items.push({
-      children: extractItems(
-        dirs[dir],
-        `${parent}/${dir}`.replace(/^\/+|\/$/g, '')
-      ),
-      id: `${parent}/${dir}`.replace(/^\/+|\/$/g, ''),
-      itemType: 'dir',
-      label: dir,
-    })
-  })
-  return items
-}
+import { WfVersion } from '@/store/workflow'
+import { FileItem, extractItems } from '@/store/workflowGetters'
 
 interface TreeItemsProps {
-  items: Item[]
+  items: FileItem[]
 }
 
 const TreeItems: React.VFC<TreeItemsProps> = (props: TreeItemsProps) => {
@@ -129,11 +80,14 @@ const TreeItems: React.VFC<TreeItemsProps> = (props: TreeItemsProps) => {
 
 interface Props {
   sx?: object
-  wf: PublishedWorkflow | DraftWorkflow
+  wfVersion: WfVersion
 }
 
 const Files: React.VFC<Props> = (props: Props) => {
-  const items = extractItems(props.wf.config.workflow.files, '')
+  const items =
+    props.wfVersion.wf === null
+      ? []
+      : extractItems(props.wfVersion.wf.config.workflow.files, '')
   return (
     <Box
       sx={(theme: Theme) => ({

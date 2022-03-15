@@ -1,29 +1,18 @@
 import { Box, Tab, Tabs } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 import Files from '@/components/detail/Files'
 import MuiMarkdown from '@/components/detail/MuiMarkdown'
-import { RootState, useAppDispatch, useAppSelector } from '@/store'
-import { DraftWorkflow, PublishedWorkflow } from '@/store/workflows'
+import { WfVersion } from '@/store/workflow'
+import { contentLoading, contentError, content } from '@/store/workflowGetters'
 
 interface Props {
   sx?: object
-  wf: PublishedWorkflow | DraftWorkflow
+  wfVersion: WfVersion
 }
 
 const ContentBox: React.VFC<Props> = (props: Props) => {
-  const contents = useAppSelector((state: RootState) => state.workflow.contents)
-  // const dispatch = useAppDispatch()
-  const [activeTab, setActiveTab] = useState('readme')
-
-  // useEffect(() => {
-  //   dispatch(
-  //     fetchContent({
-  //       name: 'readme',
-  //       url: props.wf.config.workflow.readme,
-  //     })
-  //   )
-  // }, [dispatch])
+  const [activeTab, setActiveTab] = React.useState('readme')
 
   return (
     <React.Fragment>
@@ -37,19 +26,20 @@ const ContentBox: React.VFC<Props> = (props: Props) => {
           <Tab label='Files' value='files' />
         </Tabs>
       </Box>
-      {activeTab === 'readme' && 'readme' in contents && (
+      {activeTab === 'readme' && (
         <MuiMarkdown
           children={
-            contents.readme.loading
+            contentLoading(props.wfVersion.contents, 'readme')
               ? 'Loading README...'
-              : contents.readme.error
-              ? 'Error loading README'
-              : contents.readme.content
+              : contentError(props.wfVersion.contents, 'readme') ??
+                content(props.wfVersion.contents, 'readme')
           }
           sx={{ mx: 2 }}
         />
       )}
-      {activeTab === 'files' && <Files sx={{ mt: 2, mx: 2 }} wf={props.wf} />}
+      {activeTab === 'files' && (
+        <Files sx={{ mt: 2, mx: 2 }} wfVersion={props.wfVersion} />
+      )}
     </React.Fragment>
   )
 }

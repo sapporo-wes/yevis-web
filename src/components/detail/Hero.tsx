@@ -8,7 +8,7 @@ import { Link as RouterLink } from 'react-router-dom'
 
 import WfTypeAvatar from '@/components/WfTypeAvatar'
 import { wfRepo } from '@/envDefault'
-import { WfVersion } from '@/store/workflow'
+import { PublishedWorkflow, DraftWorkflow } from '@/store/workflows'
 import {
   extractWfType,
   isVerified,
@@ -17,14 +17,14 @@ import {
 
 interface Props {
   sx?: object
-  wfVersion: WfVersion
+  wf: PublishedWorkflow | DraftWorkflow
 }
 
 const Hero: React.VFC<Props> = (props: Props) => {
-  const wfName = props.wfVersion.wf?.config?.workflow?.name ?? ''
-  const wfType = props.wfVersion.wf ? extractWfType(props.wfVersion.wf) : null
-  const verified = props.wfVersion.wf ? isVerified(props.wfVersion.wf) : null
-  const published = props.wfVersion.wf ? isPublished(props.wfVersion.wf) : null
+  const wfName = props.wf.config.workflow.name
+  const wfType = extractWfType(props.wf)
+  const verified = isVerified(props.wf)
+  const published = isPublished(props.wf)
 
   return (
     <Box

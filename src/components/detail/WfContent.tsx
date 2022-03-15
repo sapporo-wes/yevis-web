@@ -3,16 +3,15 @@ import React from 'react'
 
 import ContentBox from '@/components/detail/ContentBox'
 import InfoBox from '@/components/detail/InfoBox'
-import { WfVersions, WfVersion } from '@/store/workflow'
+import { WfVersion, VersionStatus } from '@/store/workflow'
 
 interface Props {
   sx?: object
+  versions: VersionStatus[]
   wfVersion: WfVersion
-  wfVersions: WfVersions
 }
 
 const WfContent: React.VFC<Props> = (props: Props) => {
-  const wf = props.wfVersion.wf ?? null
   return (
     <Box sx={{ maxWidth: '100vw', ...props.sx }}>
       <Box
@@ -33,7 +32,7 @@ const WfContent: React.VFC<Props> = (props: Props) => {
             height: '100%',
             width: (theme: Theme) => `calc(70% - ${theme.spacing(1)})`,
           }}>
-          {wf && <CardContent children={<ContentBox wf={wf} />} />}
+          <CardContent children={<ContentBox wfVersion={props.wfVersion} />} />
         </Card>
         <Card
           sx={{
@@ -45,7 +44,11 @@ const WfContent: React.VFC<Props> = (props: Props) => {
               )}) / 10 * 3)`,
             width: (theme: Theme) => `calc(30% - ${theme.spacing(1)})`,
           }}>
-          {wf && <CardContent children={<InfoBox wf={wf} />} />}
+          <CardContent
+            children={
+              <InfoBox versions={props.versions} wfVersion={props.wfVersion} />
+            }
+          />
         </Card>
       </Box>
     </Box>

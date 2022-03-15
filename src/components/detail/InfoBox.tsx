@@ -1,11 +1,12 @@
 import { Box } from '@mui/material'
 import React from 'react'
 
-import { DraftWorkflow, PublishedWorkflow } from '@/store/workflows'
+import { WfVersion, VersionStatus } from '@/store/workflow'
 
 interface Props {
   sx?: object
-  wf: PublishedWorkflow | DraftWorkflow
+  versions: VersionStatus[]
+  wfVersion: WfVersion
 }
 
 const InfoBox: React.VFC<Props> = (props: Props) => {

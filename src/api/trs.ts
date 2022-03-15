@@ -3,7 +3,7 @@ import yaml from 'js-yaml'
 import semver from 'semver'
 
 import { trsEndpoint, wfRepo, wfRepoGhPagesBranch } from '@/envDefault'
-import { PublishStatus } from '@/store/filter'
+import { VersionStatus } from '@/store/workflow'
 import {
   DraftWorkflow,
   DraftWorkflows,
@@ -156,7 +156,7 @@ export const getLastModifiedDate = async (
   if (commits.data.length === 0) {
     throw new Error(`Failed to get last modified date of ${id}_${version}`)
   }
-  const date = commits.data[0].commit.committer.date || null
+  const date = commits.data[0]?.commit?.committer?.date || null
   if (date === null) {
     throw new Error(`Failed to get last modified date of ${id}_${version}`)
   }
@@ -301,17 +301,25 @@ export const getDraftWorkflows = async (): Promise<DraftWorkflows> => {
   return draftWorkflows
 }
 
-export const getAllVersions = async (
-  id: string
-): Promise<[string, PublishStatus][]> => {
-  const [tool, prs] = await Promise.all([getTool(id), getPullRequests()])
-  const results: [string, PublishStatus][] = tool.versions.map((tVer) => [
-    extractVersionStr(tVer),
-    'published',
-  ])
-  const pr = prs.find((pr) => pr.id === id)
-  if (typeof pr !== 'undefined') {
-    results.push([pr.version, 'draft'])
+export const getAllVersions = async (id: string): Promise<VersionStatus[]> => {
+  const [tool, prs] = await Promise.allSettled([getTool(id), getPullRequests()])
+  const results: VersionStatus[] = []
+  if (tool.status === 'fulfilled') {
+    tool.value.versions.forEach((tVer) => {
+      results.push({
+        status: 'published',
+        version: extractVersionStr(tVer),
+      })
+    })
+  }
+  if (prs.status === 'fulfilled') {
+    const pr = prs.value.find((pr) => pr.id === id)
+    if (typeof pr !== 'undefined') {
+      results.push({
+        status: 'draft',
+        version: pr.version,
+      })
+    }
   }
   return results
 }
