@@ -4,7 +4,7 @@ import React from 'react'
 import Files from '@/components/detail/Files'
 import MuiMarkdown from '@/components/detail/MuiMarkdown'
 import { WfVersion } from '@/store/workflow'
-import { contentLoading, contentError, content } from '@/store/workflowGetters'
+import { contentDisplay } from '@/store/workflowGetters'
 
 interface Props {
   sx?: object
@@ -28,12 +28,7 @@ const ContentBox: React.VFC<Props> = (props: Props) => {
       </Box>
       {activeTab === 'readme' && (
         <MuiMarkdown
-          children={
-            contentLoading(props.wfVersion.contents, 'readme')
-              ? 'Loading README...'
-              : contentError(props.wfVersion.contents, 'readme') ??
-                content(props.wfVersion.contents, 'readme')
-          }
+          children={contentDisplay(props.wfVersion.contents, 'readme')}
           sx={{ mx: 2 }}
         />
       )}

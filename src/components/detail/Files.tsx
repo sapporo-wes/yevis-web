@@ -6,8 +6,17 @@ import { TreeView, TreeItem, treeItemClasses } from '@mui/lab'
 import { Chip, Box, Theme } from '@mui/material'
 import React from 'react'
 
+import FileContent from '@/components/detail/FileContent'
 import { WfVersion } from '@/store/workflow'
-import { FileItem, extractItems } from '@/store/workflowGetters'
+import {
+  FileItem,
+  extractItems,
+  primaryWfTarget,
+  findFileItem,
+  contentDisplay,
+  contentLoading,
+  contentError,
+} from '@/store/workflowGetters'
 
 interface TreeItemsProps {
   items: FileItem[]
@@ -84,30 +93,64 @@ interface Props {
 }
 
 const Files: React.VFC<Props> = (props: Props) => {
-  const items =
-    props.wfVersion.wf === null
-      ? []
-      : extractItems(props.wfVersion.wf.config.workflow.files, '')
+  const items = React.useMemo(
+    () => extractItems(props.wfVersion.wf?.config?.workflow?.files || [], ''),
+    [props.wfVersion.wf]
+  )
+  const [selectedItem, setSelectedItem] = React.useState<FileItem | ''>('') // empty string is used for TreeView
+  React.useEffect(() => {
+    const primaryWf = findFileItem(
+      items,
+      primaryWfTarget(props.wfVersion.wf?.config?.workflow?.files || [])
+    )
+    setSelectedItem(primaryWf)
+  }, [items])
+
   return (
     <Box
-      sx={(theme: Theme) => ({
-        border: '1px solid',
-        borderColor: theme.palette.grey[500],
-        borderRadius: theme.spacing(0.5),
-        p: 2,
+      sx={{
         ...props.sx,
-      })}>
-      <TreeView
-        defaultCollapseIcon={<ExpandMoreIcon sx={{ fontSize: 20 }} />}
-        defaultExpandIcon={<ChevronRightIcon sx={{ fontSize: 20 }} />}
-        sx={{
-          '.MuiTreeItem-iconContainer svg': {
-            color: 'primary.main',
-            fontSize: 24,
-          },
-        }}>
-        <TreeItems items={items} />
-      </TreeView>
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
+      <Box
+        sx={(theme: Theme) => ({
+          border: '1px solid',
+          borderColor: theme.palette.grey[500],
+          borderRadius: theme.spacing(0.5),
+          p: 2,
+        })}>
+        <TreeView
+          defaultCollapseIcon={<ExpandMoreIcon sx={{ fontSize: 20 }} />}
+          defaultExpandIcon={<ChevronRightIcon sx={{ fontSize: 20 }} />}
+          onNodeSelect={(_event: React.SyntheticEvent, nodeId: string) => {
+            const item = findFileItem(items, nodeId)
+            if (item !== '' && item.itemType === 'file') {
+              setSelectedItem(item)
+            }
+          }}
+          selected={selectedItem === '' ? '' : selectedItem.id}
+          sx={{
+            '.MuiTreeItem-iconContainer svg': {
+              color: 'primary.main',
+              fontSize: 24,
+            },
+          }}>
+          <TreeItems items={items} />
+        </TreeView>
+      </Box>
+      {selectedItem !== '' && selectedItem.itemType === 'file' && (
+        <FileContent
+          buttonDisabled={
+            contentLoading(props.wfVersion.contents, selectedItem.id) ||
+            contentError(props.wfVersion.contents, selectedItem.id) !== null
+          }
+          content={contentDisplay(props.wfVersion.contents, selectedItem.id)}
+          sx={{ mt: 3 }}
+          target={selectedItem.id}
+          url={selectedItem.url || ''}
+        />
+      )}
     </Box>
   )
 }

@@ -46,6 +46,15 @@ export const content = (
   return contents.files[target]?.content ?? ''
 }
 
+export const contentDisplay = (
+  contents: WfVersion['contents'],
+  target: string
+): string => {
+  return contentLoading(contents, target)
+    ? `Loading ${target}...`
+    : contentError(contents, target) ?? content(contents, target)
+}
+
 export interface FileItem {
   children?: FileItem[]
   id: string
@@ -93,4 +102,25 @@ export const extractItems = (files: File[], parent: string): FileItem[] => {
     })
   })
   return items
+}
+
+export const primaryWfTarget = (files: File[]): string => {
+  const primary = files.find((file) => file.type === 'primary')
+  return primary?.target || ''
+}
+
+export const findFileItem = (
+  files: FileItem[],
+  target: string
+): FileItem | '' => {
+  const file = files.find((file) => file.id === target)
+  if (typeof file !== 'undefined') {
+    return file
+  } else {
+    const children = files.flatMap((file) => file.children ?? [])
+    if (children.length > 0) {
+      return findFileItem(children, target)
+    }
+    return ''
+  }
 }

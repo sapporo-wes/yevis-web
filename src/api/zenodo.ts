@@ -138,7 +138,7 @@ const fetchFileContent = async (
         result.error = (err as Error).message
       }
     } else {
-      result.error = 'This file cannot be fetched. (e.g. binary file)'
+      result.error = 'This file cannot be fetched. (e.g., binary file)'
     }
   } else {
     if (isFetchableFileExt(file.url)) {
