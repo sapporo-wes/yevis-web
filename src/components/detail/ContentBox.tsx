@@ -1,3 +1,6 @@
+import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined'
+import FactCheckOutlinedIcon from '@mui/icons-material/FactCheckOutlined'
+import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { Box, Tab, Tabs } from '@mui/material'
 import React from 'react'
 
@@ -22,10 +25,37 @@ const ContentBox: React.VFC<Props> = (props: Props) => {
           onChange={(_, value) => setActiveTab(value)}
           textColor='secondary'
           value={activeTab}>
-          <Tab label='Readme' value='readme' />
-          <Tab label='Files' value='files' />
-          <Tab label='Tests' value='tests' />
-          <Tab label='Versions' value='versions' />
+          <Tab
+            icon={
+              <ArticleOutlinedIcon sx={{ height: '1.2rem', width: '1.2rem' }} />
+            }
+            iconPosition='start'
+            label='Readme'
+            sx={{ minHeight: '48px' }}
+            value='readme'
+          />
+          <Tab
+            icon={
+              <FileCopyOutlinedIcon
+                sx={{ height: '1.2rem', width: '1.2rem' }}
+              />
+            }
+            iconPosition='start'
+            label='Files'
+            sx={{ minHeight: '48px' }}
+            value='files'
+          />
+          <Tab
+            icon={
+              <FactCheckOutlinedIcon
+                sx={{ height: '1.2rem', width: '1.2rem' }}
+              />
+            }
+            iconPosition='start'
+            label='Tests'
+            sx={{ minHeight: '48px' }}
+            value='tests'
+          />
         </Tabs>
       </Box>
       {activeTab === 'readme' && (

@@ -95,7 +95,6 @@ export const initializeWf = createAsyncThunk(
 
 interface FetchWfArgs {
   id: string
-  version: string
 }
 
 interface FetchWfMeta {
@@ -103,28 +102,34 @@ interface FetchWfMeta {
   requestId: string
 }
 
-export const fetchWf = createAsyncThunk(
-  'workflow/fetchWf',
+export const fetchWfs = createAsyncThunk(
+  'workflow/fetchWfs',
   async (
     args: FetchWfArgs,
     { fulfillWithValue, rejectWithValue, getState, requestId }
   ) => {
     const wfState = (getState() as RootState).workflow as WorkflowState
-    if (wfState[args.id].versions[args.version].requestId !== requestId) {
+    const versions = wfState[args.id].versionStatus.map((v) => v.version)
+    const requestIds = Array.from(
+      new Set(versions.map((v) => wfState[args.id].versions[v].requestId))
+    )
+    if (!requestIds.includes(requestId)) {
       return rejectWithValue('Already fetched')
     }
-    const versionStatus = wfState[args.id].versionStatus.find(
-      (v) => v.version === args.version
-    )
-    if (typeof versionStatus === 'undefined') {
-      return rejectWithValue(`This version: ${args.version} not found`)
-    }
+
     try {
-      const wf =
-        versionStatus.status === 'published'
-          ? await getPublishedWorkflow(args.id, args.version)
-          : await getDraftWorkflow(args.id, args.version)
-      return fulfillWithValue(wf)
+      const wfs = await Promise.all(
+        wfState[args.id].versionStatus.map((s) =>
+          s.status === 'published'
+            ? getPublishedWorkflow(args.id, s.version)
+            : getDraftWorkflow(args.id, s.version)
+        )
+      )
+      const results: Record<string, PublishedWorkflow | DraftWorkflow> = {}
+      wfs.forEach((wf, i) => {
+        results[wfState[args.id].versionStatus[i].version] = wf
+      })
+      return fulfillWithValue(results)
     } catch (err) {
       return rejectWithValue((err as Error).message)
     }
@@ -199,9 +204,9 @@ export const fetchTests = createAsyncThunk(
 
 export const workflowSlice = createSlice({
   extraReducers: {
-    // initializeWf -> fetchWf -> fetchContents
+    // initializeWf -> fetchWfs -> fetchContents
     [initializeWf.pending.type]: (
-      state,
+      state: WorkflowState,
       action: PayloadAction<undefined, string, InitializeWfMeta>
     ) => {
       const { id } = action.meta.arg
@@ -218,7 +223,7 @@ export const workflowSlice = createSlice({
       }
     },
     [initializeWf.fulfilled.type]: (
-      state,
+      state: WorkflowState,
       action: PayloadAction<VersionStatus[], string, InitializeWfMeta>
     ) => {
       const { id } = action.meta.arg
@@ -226,7 +231,7 @@ export const workflowSlice = createSlice({
       state[id].versionStatus = action.payload
     },
     [initializeWf.rejected.type]: (
-      state,
+      state: WorkflowState,
       action: PayloadAction<string, string, InitializeWfMeta>
     ) => {
       const { id } = action.meta.arg
@@ -236,75 +241,90 @@ export const workflowSlice = createSlice({
       }
     },
 
-    [fetchWf.pending.type]: (
-      state,
+    [fetchWfs.pending.type]: (
+      state: WorkflowState,
       action: PayloadAction<undefined, string, FetchWfMeta>
     ) => {
-      const { id, version } = action.meta.arg
+      const { id } = action.meta.arg
       if (id in state) {
-        if (version in state) {
-          // already fetched
-        } else {
-          state[id].versions[version] = {
-            contents: {
+        const versions = state[id].versionStatus.map((v) => v.version)
+        versions.forEach((version) => {
+          if (version in state[id].versions) {
+            // already fetched
+          } else {
+            state[id].versions[version] = {
+              contents: {
+                error: null,
+                files: {},
+                loading: false,
+                requestId: null,
+              },
               error: null,
-              files: {},
-              loading: false,
-              requestId: null,
-            },
-            error: null,
-            loading: true,
-            requestId: action.meta.requestId,
-            tests: {
-              error: null,
-              loading: false,
-              requestId: null,
-              results: [],
-            },
-            wf: null,
+              loading: true,
+              requestId: action.meta.requestId,
+              tests: {
+                error: null,
+                loading: false,
+                requestId: null,
+                results: [],
+              },
+              wf: null,
+            }
           }
-        }
+        })
       }
     },
-    [fetchWf.fulfilled.type]: (
-      state,
+    [fetchWfs.fulfilled.type]: (
+      state: WorkflowState,
       action: PayloadAction<
-        PublishedWorkflow | DraftWorkflow,
+        Record<string, PublishedWorkflow | DraftWorkflow>,
         string,
         FetchWfMeta
       >
     ) => {
-      const { id, version } = action.meta.arg
-      if (id in state && version in state[id].versions) {
-        state[id].versions[version].loading = false
-        state[id].versions[version].wf = action.payload
+      const { id } = action.meta.arg
+      if (id in state) {
+        const versions = state[id].versionStatus.map((v) => v.version)
+        versions.forEach((version) => {
+          if (version in state[id].versions && action.payload[version]) {
+            state[id].versions[version].loading = false
+            state[id].versions[version].wf = action.payload[version]
+          }
+        })
       }
     },
-    [fetchWf.rejected.type]: (
-      state,
+    [fetchWfs.rejected.type]: (
+      state: WorkflowState,
       action: PayloadAction<string, string, FetchWfMeta>
     ) => {
-      const { id, version } = action.meta.arg
+      const { id } = action.meta.arg
       if (action.payload !== 'Already fetched') {
-        if (id in state && version in state[id].versions) {
-          state[id].versions[version].loading = false
-          state[id].versions[version].error = action.payload
+        if (id in state) {
+          const versions = state[id].versionStatus.map((v) => v.version)
+          versions.forEach((version) => {
+            if (version in state[id].versions) {
+              state[id].versions[version].loading = false
+              state[id].versions[version].error = action.payload
+            }
+          })
         }
       }
     },
 
     [fetchContents.pending.type]: (
-      state,
+      state: WorkflowState,
       action: PayloadAction<undefined, string, FetchContentsMeta>
     ) => {
       const { id, version } = action.meta.arg
       if (id in state && version in state[id].versions) {
-        state[id].versions[version].contents.loading = true
-        state[id].versions[version].contents.requestId = action.meta.requestId
+        if (state[id].versions[version].contents.requestId === null) {
+          state[id].versions[version].contents.loading = true
+          state[id].versions[version].contents.requestId = action.meta.requestId
+        }
       }
     },
     [fetchContents.fulfilled.type]: (
-      state,
+      state: WorkflowState,
       action: PayloadAction<
         { [target: string]: FileContent },
         string,
@@ -318,7 +338,7 @@ export const workflowSlice = createSlice({
       }
     },
     [fetchContents.rejected.type]: (
-      state,
+      state: WorkflowState,
       action: PayloadAction<string, string, FetchContentsMeta>
     ) => {
       const { id, version } = action.meta.arg
@@ -331,17 +351,19 @@ export const workflowSlice = createSlice({
     },
 
     [fetchTests.pending.type]: (
-      state,
+      state: WorkflowState,
       action: PayloadAction<undefined, string, FetchTestsMeta>
     ) => {
       const { id, version } = action.meta.arg
       if (id in state && version in state[id].versions) {
-        state[id].versions[version].tests.loading = true
-        state[id].versions[version].tests.requestId = action.meta.requestId
+        if (state[id].versions[version].tests.requestId === null) {
+          state[id].versions[version].tests.loading = true
+          state[id].versions[version].tests.requestId = action.meta.requestId
+        }
       }
     },
     [fetchTests.fulfilled.type]: (
-      state,
+      state: WorkflowState,
       action: PayloadAction<RunResult[], string, FetchTestsMeta>
     ) => {
       const { id, version } = action.meta.arg
@@ -351,7 +373,7 @@ export const workflowSlice = createSlice({
       }
     },
     [fetchTests.rejected.type]: (
-      state,
+      state: WorkflowState,
       action: PayloadAction<string, string, FetchTestsMeta>
     ) => {
       const { id, version } = action.meta.arg

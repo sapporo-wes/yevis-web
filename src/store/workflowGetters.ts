@@ -1,4 +1,12 @@
-import { WorkflowState, WfVersion } from '@/store/workflow'
+import semver from 'semver'
+
+import { PublishStatus } from '@/store/filter'
+import { WorkflowState, WfVersions, WfVersion } from '@/store/workflow'
+import {
+  PublishedWorkflow,
+  DraftWorkflow,
+  isPublishedWorkflow,
+} from '@/store/workflows'
 import { File, TestFile, TestFileType, FileType } from '@/types/ghTrs'
 
 export const topLoading = (
@@ -126,4 +134,27 @@ export const findFileItem = (
     }
     return ''
   }
+}
+
+export interface VerInfo {
+  date: string
+  doi: string | null
+  status: PublishStatus
+  version: string
+}
+
+export const versionsInfo = (wfVersions: WfVersions): VerInfo[] => {
+  const wfs = Object.values(wfVersions)
+    .map((wfVersion) => wfVersion.wf)
+    .filter((wf) => wf !== null) as (PublishedWorkflow | DraftWorkflow)[]
+  return wfs
+    .map((wf) => ({
+      date: wf.date,
+      doi: wf.config.zenodo?.doi || null,
+      status: (isPublishedWorkflow(wf)
+        ? 'published'
+        : 'draft') as PublishStatus,
+      version: wf.version,
+    }))
+    .sort((a, b) => semver.compare(b.version, a.version))
 }

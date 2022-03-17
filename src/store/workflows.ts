@@ -96,7 +96,7 @@ interface FetchWfsMeta {
 export const workflowsSlice = createSlice({
   extraReducers: {
     [fetchWfs.pending.type]: (
-      state,
+      state: WorkflowsState,
       action: PayloadAction<undefined, string, FetchWfsMeta>
     ) => {
       if (state.requestId === null) {
@@ -105,14 +105,14 @@ export const workflowsSlice = createSlice({
       }
     },
     [fetchWfs.fulfilled.type]: (
-      state,
+      state: WorkflowsState,
       action: PayloadAction<WorkflowsState['wfs']>
     ) => {
       state.loading = false
       state.wfs = action.payload
     },
     [fetchWfs.rejected.type]: (
-      state,
+      state: WorkflowsState,
       action: PayloadAction<WorkflowsState['error']>
     ) => {
       if (action.payload !== 'Already fetched') {

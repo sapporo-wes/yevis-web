@@ -4,8 +4,8 @@ import { Box, Button, Card, CardContent, Link, Stack } from '@mui/material'
 import React from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 
+import DoiBadge from '@/components/DoiBadge'
 import Authors from '@/components/home/Authors'
-import DoiBadge from '@/components/home/DoiBadge'
 import WfTypeAvatar from '@/components/WfTypeAvatar'
 import { DraftWorkflow, PublishedWorkflow } from '@/store/workflows'
 import {
@@ -53,7 +53,7 @@ const WfCard: React.VFC<Props> = (props: Props) => {
                 fontSize: '1.2rem',
                 fontWeight: 'bold',
               }}
-              to={`workflows/${config.id}/versions/${config.version}`}
+              to={`/workflows/${config.id}/versions/${config.version}`}
               underline='hover'
             />
             {verified ? (
@@ -96,7 +96,7 @@ const WfCard: React.VFC<Props> = (props: Props) => {
                   component={RouterLink}
                   size='small'
                   sx={{ textTransform: 'none' }}
-                  to={`workflows/${config.id}/versions/${config.version}`}
+                  to={`/workflows/${config.id}/versions/${config.version}`}
                   variant='outlined'
                 />
                 <Box

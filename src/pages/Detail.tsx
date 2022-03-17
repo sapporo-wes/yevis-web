@@ -9,7 +9,7 @@ import Footer from '@/components/Footer'
 import { useAppDispatch, useAppSelector } from '@/store'
 import {
   initializeWf,
-  fetchWf,
+  fetchWfs,
   fetchContents,
   fetchTests,
 } from '@/store/workflow'
@@ -25,13 +25,13 @@ const Detail: React.VFC = () => {
   React.useEffect(() => {
     ;(async () => {
       await dispatch(initializeWf({ id }))
-      await dispatch(fetchWf({ id, version }))
+      await dispatch(fetchWfs({ id }))
       await Promise.allSettled([
         dispatch(fetchContents({ id, version })),
         dispatch(fetchTests({ id, version })),
       ])
     })()
-  }, [dispatch])
+  }, [dispatch, id, version])
 
   const wfState = useAppSelector((state) => state.workflow)
   const loading = topLoading(wfState, id, version)

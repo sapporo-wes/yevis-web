@@ -35,7 +35,8 @@ const Contents: React.VFC<Props> = (props: Props) => {
             children={<ContentBox id={props.id} version={props.version} />}
           />
         </Card>
-        <Card
+        <InfoBox
+          id={props.id}
           sx={{
             flexGrow: 1,
             height: '100%',
@@ -44,11 +45,9 @@ const Contents: React.VFC<Props> = (props: Props) => {
                 4 * 2 + 2
               )}) / 10 * 3)`,
             width: (theme: Theme) => `calc(30% - ${theme.spacing(1)})`,
-          }}>
-          <CardContent
-            children={<InfoBox id={props.id} version={props.version} />}
-          />
-        </Card>
+          }}
+          version={props.version}
+        />
       </Box>
     </Box>
   )
