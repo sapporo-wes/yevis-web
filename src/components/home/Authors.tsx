@@ -11,7 +11,12 @@ interface Props {
 const Authors: React.VFC<Props> = (props: Props) => {
   return props.authors.length ? (
     <Box
-      sx={{ display: 'flex', flexDirection: 'raw', ...props.sx, columnGap: 1 }}>
+      sx={{
+        display: 'flex',
+        flexDirection: 'raw',
+        ...props.sx,
+        columnGap: 1,
+      }}>
       <Box
         children='By'
         sx={{
@@ -36,4 +41,4 @@ const Authors: React.VFC<Props> = (props: Props) => {
   ) : null
 }
 
-export default Authors
+export default React.memo(Authors)

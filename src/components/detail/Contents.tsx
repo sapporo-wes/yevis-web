@@ -3,15 +3,14 @@ import React from 'react'
 
 import ContentBox from '@/components/detail/ContentBox'
 import InfoBox from '@/components/detail/InfoBox'
-import { WfVersion, VersionStatus } from '@/store/workflow'
 
 interface Props {
+  id: string
   sx?: object
-  versions: VersionStatus[]
-  wfVersion: WfVersion
+  version: string
 }
 
-const WfContent: React.VFC<Props> = (props: Props) => {
+const Contents: React.VFC<Props> = (props: Props) => {
   return (
     <Box sx={{ maxWidth: '100vw', ...props.sx }}>
       <Box
@@ -32,7 +31,9 @@ const WfContent: React.VFC<Props> = (props: Props) => {
             height: '100%',
             width: (theme: Theme) => `calc(70% - ${theme.spacing(1)})`,
           }}>
-          <CardContent children={<ContentBox wfVersion={props.wfVersion} />} />
+          <CardContent
+            children={<ContentBox id={props.id} version={props.version} />}
+          />
         </Card>
         <Card
           sx={{
@@ -45,9 +46,7 @@ const WfContent: React.VFC<Props> = (props: Props) => {
             width: (theme: Theme) => `calc(30% - ${theme.spacing(1)})`,
           }}>
           <CardContent
-            children={
-              <InfoBox versions={props.versions} wfVersion={props.wfVersion} />
-            }
+            children={<InfoBox id={props.id} version={props.version} />}
           />
         </Card>
       </Box>
@@ -55,4 +54,4 @@ const WfContent: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default WfContent
+export default React.memo(Contents)

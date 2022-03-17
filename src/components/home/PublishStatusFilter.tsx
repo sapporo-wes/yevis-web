@@ -3,7 +3,7 @@ import CheckRoundedIcon from '@mui/icons-material/CheckRounded'
 import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import React from 'react'
 
-import { RootState, useAppDispatch, useAppSelector } from '@/store'
+import { useAppDispatch, useAppSelector } from '@/store'
 import { PublishStatus, setPublishStatus } from '@/store/filter'
 import { publishStatusCounts } from '@/store/workflowsGetters'
 
@@ -13,10 +13,8 @@ interface Props {
 }
 
 const PublishStatusFilter: React.VFC<Props> = (props: Props) => {
-  const wfs = useAppSelector((state: RootState) => state.workflows.wfs)
-  const selectedStatus = useAppSelector(
-    (state: RootState) => state.filter.publishStatus
-  )
+  const wfs = useAppSelector((state) => state.workflows.wfs)
+  const selectedStatus = useAppSelector((state) => state.filter.publishStatus)
   const dispatch = useAppDispatch()
   const counts = publishStatusCounts(wfs)
 
@@ -56,4 +54,4 @@ const PublishStatusFilter: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default PublishStatusFilter
+export default React.memo(PublishStatusFilter)

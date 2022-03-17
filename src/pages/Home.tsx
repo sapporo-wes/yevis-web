@@ -1,5 +1,5 @@
 import { Box, Stack } from '@mui/material'
-import React, { useEffect } from 'react'
+import React from 'react'
 
 import Footer from '@/components/Footer'
 import Hero from '@/components/home/Hero'
@@ -9,7 +9,7 @@ import { fetchWfs } from '@/store/workflows'
 
 const Home: React.VFC = () => {
   const dispatch = useAppDispatch()
-  useEffect(() => {
+  React.useEffect(() => {
     dispatch(fetchWfs())
   }, [dispatch])
 

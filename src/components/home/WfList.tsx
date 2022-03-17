@@ -5,16 +5,15 @@ import ErrorMsg from '@/components/home/ErrorMsg'
 import Filters from '@/components/home/Filters'
 import LoadingMsg from '@/components/home/LoadingMsg'
 import WfCards from '@/components/home/WfCards'
-import { RootState, useAppSelector } from '@/store'
+import { useAppSelector } from '@/store'
 
 interface Props {
   sx?: object
 }
 
 const WfList: React.VFC<Props> = (props: Props) => {
-  const workflows = useAppSelector((state: RootState) => state.workflows)
-  const loading = workflows.loading
-  const error = workflows.error !== null
+  const loading = useAppSelector((state) => state.workflows.loading)
+  const error = useAppSelector((state) => state.workflows.error)
 
   return (
     <Box
@@ -30,11 +29,17 @@ const WfList: React.VFC<Props> = (props: Props) => {
         }}>
         <Stack spacing={2}>
           <Filters />
-          {loading ? <LoadingMsg /> : error ? <ErrorMsg /> : <WfCards />}
+          {loading ? (
+            <LoadingMsg />
+          ) : error !== null ? (
+            <ErrorMsg />
+          ) : (
+            <WfCards />
+          )}
         </Stack>
       </Box>
     </Box>
   )
 }
 
-export default WfList
+export default React.memo(WfList)

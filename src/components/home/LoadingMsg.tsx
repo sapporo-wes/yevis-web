@@ -18,4 +18,4 @@ const LoadingMsg: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default LoadingMsg
+export default React.memo(LoadingMsg)

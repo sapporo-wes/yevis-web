@@ -20,4 +20,4 @@ const Footer: React.VFC = () => {
   )
 }
 
-export default Footer
+export default React.memo(Footer)

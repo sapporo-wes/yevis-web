@@ -5,15 +5,16 @@ import PublishStatusFilter from '@/components/home/PublishStatusFilter'
 import SortBy from '@/components/home/SortBy'
 import WfNameFilter from '@/components/home/WfNameFilter'
 import WfTypeFilter from '@/components/home/WfTypeFilter'
-import { RootState, useAppSelector } from '@/store'
+import { useAppSelector } from '@/store'
 
 interface Props {
   sx?: object
 }
 
 const Filters: React.VFC<Props> = (props: Props) => {
-  const workflows = useAppSelector((state: RootState) => state.workflows)
-  const disabled = workflows.loading || workflows.error !== null
+  const loading = useAppSelector((state) => state.workflows.loading)
+  const error = useAppSelector((state) => state.workflows.error)
+  const disabled = loading || error !== null
 
   return (
     <Box
@@ -26,7 +27,7 @@ const Filters: React.VFC<Props> = (props: Props) => {
         ...props.sx,
       }}>
       <Box
-        sx={{
+        sx={(theme: Theme) => ({
           columnGap: 2,
           display: 'flex',
           flexDirection: 'row',
@@ -35,7 +36,8 @@ const Filters: React.VFC<Props> = (props: Props) => {
             `(${theme.breakpoints.values.lg}px - ${theme.spacing(
               4 * 2 + 2
             )}) / 2)`,
-        }}>
+          width: `calc(50% - ${theme.spacing(1)})`,
+        })}>
         <WfNameFilter
           disabled={disabled}
           sx={{
@@ -50,16 +52,16 @@ const Filters: React.VFC<Props> = (props: Props) => {
         />
       </Box>
       <Box
-        sx={{
+        sx={(theme: Theme) => ({
           columnGap: 2,
           display: 'flex',
           flexDirection: 'row',
           flexGrow: 1,
-          minWidth: (theme: Theme) =>
-            `calc((${theme.breakpoints.values.lg}px - ${theme.spacing(
-              4 * 2 + 2
-            )}) / 2)`,
-        }}>
+          minWidth: `calc((${theme.breakpoints.values.lg}px - ${theme.spacing(
+            4 * 2 + 2
+          )}) / 2)`,
+          width: `calc(50% - ${theme.spacing(1)})`,
+        })}>
         <WfTypeFilter
           disabled={disabled}
           sx={{
@@ -78,4 +80,4 @@ const Filters: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default Filters
+export default React.memo(Filters)

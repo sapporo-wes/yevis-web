@@ -26,4 +26,4 @@ const DoiBadge: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default DoiBadge
+export default React.memo(DoiBadge)

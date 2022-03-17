@@ -1,14 +1,14 @@
 import { Box, Tab, Tabs } from '@mui/material'
 import React from 'react'
 
-import Files from '@/components/detail/Files'
-import MuiMarkdown from '@/components/detail/MuiMarkdown'
-import { WfVersion } from '@/store/workflow'
-import { contentDisplay } from '@/store/workflowGetters'
+import TabFiles from '@/components/detail/TabFiles'
+import TabReadme from '@/components/detail/TabReadme'
+import TabTests from '@/components/detail/TabTests'
 
 interface Props {
+  id: string
   sx?: object
-  wfVersion: WfVersion
+  version: string
 }
 
 const ContentBox: React.VFC<Props> = (props: Props) => {
@@ -24,19 +24,22 @@ const ContentBox: React.VFC<Props> = (props: Props) => {
           value={activeTab}>
           <Tab label='Readme' value='readme' />
           <Tab label='Files' value='files' />
+          <Tab label='Tests' value='tests' />
+          <Tab label='Versions' value='versions' />
         </Tabs>
       </Box>
       {activeTab === 'readme' && (
-        <MuiMarkdown
-          children={contentDisplay(props.wfVersion.contents, 'readme')}
-          sx={{ mx: 2 }}
-        />
+        <TabReadme id={props.id} sx={{ mx: 2 }} version={props.version} />
       )}
       {activeTab === 'files' && (
-        <Files sx={{ mt: 2, mx: 2 }} wfVersion={props.wfVersion} />
+        <TabFiles id={props.id} sx={{ mt: 2, mx: 2 }} version={props.version} />
       )}
+      {activeTab === 'tests' && (
+        <TabTests id={props.id} sx={{ mt: 2, mx: 2 }} version={props.version} />
+      )}
+      {activeTab === 'versions' && <Box>versions</Box>}
     </React.Fragment>
   )
 }
 
-export default ContentBox
+export default React.memo(ContentBox)

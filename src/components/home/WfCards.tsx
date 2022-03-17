@@ -2,7 +2,7 @@ import { Box, Theme } from '@mui/material'
 import React from 'react'
 
 import WfCard from '@/components/home/WfCard'
-import { RootState, useAppSelector } from '@/store'
+import { useAppSelector } from '@/store'
 import { filteredWfs } from '@/store/workflowsGetters'
 
 interface Props {
@@ -10,8 +10,8 @@ interface Props {
 }
 
 const WfCards: React.VFC<Props> = (props: Props) => {
-  const wfsState = useAppSelector((state: RootState) => state.workflows.wfs)
-  const filterState = useAppSelector((state: RootState) => state.filter)
+  const wfsState = useAppSelector((state) => state.workflows.wfs)
+  const filterState = useAppSelector((state) => state.filter)
   const wfs = filteredWfs(wfsState, filterState)
 
   return (
@@ -43,4 +43,4 @@ const WfCards: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default WfCards
+export default React.memo(WfCards)

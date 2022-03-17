@@ -2,7 +2,7 @@ import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import React from 'react'
 
 import WfTypeAvatar from '@/components/WfTypeAvatar'
-import { RootState, useAppDispatch, useAppSelector } from '@/store'
+import { useAppDispatch, useAppSelector } from '@/store'
 import { setWfType, WfType } from '@/store/filter'
 import { wfTypeCounts } from '@/store/workflowsGetters'
 
@@ -12,10 +12,8 @@ interface Props {
 }
 
 const WfTypeFilter: React.VFC<Props> = (props: Props) => {
-  const selectedWfType = useAppSelector(
-    (state: RootState) => state.filter.wfType
-  )
-  const wfs = useAppSelector((state: RootState) => state.workflows.wfs)
+  const selectedWfType = useAppSelector((state) => state.filter.wfType)
+  const wfs = useAppSelector((state) => state.workflows.wfs)
   const counts = wfTypeCounts(wfs)
   const dispatch = useAppDispatch()
 
@@ -59,4 +57,4 @@ const WfTypeFilter: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default WfTypeFilter
+export default React.memo(WfTypeFilter)

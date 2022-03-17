@@ -1,13 +1,11 @@
-import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded'
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
-import { Box, Stack, Link } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 import React from 'react'
-import { Link as RouterLink } from 'react-router-dom'
 
-import { wfRepo } from '@/envDefault'
+import BackToHome from '@/components/BackToHome'
 
 interface Props {
   description: string
+  sx?: object
   title: string
 }
 
@@ -17,6 +15,7 @@ const ErrorHero: React.VFC<Props> = (props: Props) => {
       sx={{
         bgcolor: 'primary.main',
         maxWidth: '100vw',
+        ...props.sx,
       }}>
       <Box
         sx={{
@@ -25,37 +24,7 @@ const ErrorHero: React.VFC<Props> = (props: Props) => {
           p: 4,
         }}>
         <Stack spacing={2}>
-          <Link component={RouterLink} to='/' underline='hover'>
-            <Stack direction='row' sx={{ alignItems: 'center' }}>
-              <HomeRoundedIcon
-                sx={{
-                  color: 'secondary.main',
-                  height: '1.2rem',
-                  width: '1.2rem',
-                }}
-              />
-              <ArrowBackIosNewRoundedIcon
-                sx={{
-                  color: 'secondary.main',
-                  height: '1.2rem',
-                  width: '1.2rem',
-                }}
-              />
-              <Box
-                children={wfRepo()}
-                component='span'
-                sx={{
-                  '&:hover': {
-                    textDecoration: 'underline',
-                  },
-                  color: 'secondary.main',
-                  fontFamily: 'Quicksand',
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                }}
-              />
-            </Stack>
-          </Link>
+          <BackToHome />
           <Box
             children={props.title}
             component='h1'
@@ -73,6 +42,7 @@ const ErrorHero: React.VFC<Props> = (props: Props) => {
             sx={{
               fontFamily: 'Quicksand',
               fontSize: '1.2rem',
+              my: 0,
             }}
           />
         </Stack>
@@ -81,4 +51,4 @@ const ErrorHero: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default ErrorHero
+export default React.memo(ErrorHero)

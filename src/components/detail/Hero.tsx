@@ -1,14 +1,11 @@
-import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded'
 import BuildRoundedIcon from '@mui/icons-material/BuildRounded'
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded'
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
-import { Box, Chip, Link, Stack } from '@mui/material'
+import { Box, Chip, Stack } from '@mui/material'
 import React from 'react'
-import { Link as RouterLink } from 'react-router-dom'
 
+import BackToHome from '@/components/BackToHome'
 import WfTypeAvatar from '@/components/WfTypeAvatar'
-import { wfRepo } from '@/envDefault'
-import { PublishedWorkflow, DraftWorkflow } from '@/store/workflows'
+import { useAppSelector } from '@/store'
 import {
   extractWfType,
   isVerified,
@@ -16,15 +13,23 @@ import {
 } from '@/store/workflowsGetters'
 
 interface Props {
+  id: string
   sx?: object
-  wf: PublishedWorkflow | DraftWorkflow
+  version: string
 }
 
 const Hero: React.VFC<Props> = (props: Props) => {
-  const wfName = props.wf.config.workflow.name
-  const wfType = extractWfType(props.wf)
-  const verified = isVerified(props.wf)
-  const published = isPublished(props.wf)
+  const wf = useAppSelector(
+    (state) => state.workflow[props.id]?.versions[props.version]?.wf
+  )
+  if (typeof wf === 'undefined' || wf === null) {
+    return null
+  }
+
+  const wfType = extractWfType(wf)
+  const wfName = wf.config.workflow.name
+  const verified = isVerified(wf)
+  const published = isPublished(wf)
 
   return (
     <Box
@@ -40,46 +45,17 @@ const Hero: React.VFC<Props> = (props: Props) => {
           p: 4,
         }}>
         <Stack spacing={2}>
-          <Link component={RouterLink} to='/' underline='hover'>
-            <Stack direction='row' sx={{ alignItems: 'center' }}>
-              <HomeRoundedIcon
-                sx={{
-                  color: 'secondary.main',
-                  height: '1.2rem',
-                  width: '1.2rem',
-                }}
-              />
-              <ArrowBackIosNewRoundedIcon
-                sx={{
-                  color: 'secondary.main',
-                  height: '1.2rem',
-                  width: '1.2rem',
-                }}
-              />
-              <Box
-                children={wfRepo()}
-                component='span'
-                sx={{
-                  '&:hover': {
-                    textDecoration: 'underline',
-                  },
-                  color: 'secondary.main',
-                  fontFamily: 'Quicksand',
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                }}
-              />
-            </Stack>
-          </Link>
-          <Stack direction='row' spacing={2} sx={{ alignItems: 'center' }}>
-            {wfType ? (
-              <WfTypeAvatar
-                sx={{ height: '3rem', width: '3rem' }}
-                wfType={wfType}
-              />
-            ) : null}
+          <BackToHome />
+          <Stack
+            direction='row'
+            spacing={2}
+            sx={{ alignItems: 'center', ...props.sx }}>
+            <WfTypeAvatar
+              sx={{ height: '3rem', width: '3rem' }}
+              wfType={wfType}
+            />
             <Box
-              children={`${wfName}`}
+              children={wfName}
               component='h1'
               sx={{
                 color: 'common.white',
@@ -124,4 +100,4 @@ const Hero: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default Hero
+export default React.memo(Hero)

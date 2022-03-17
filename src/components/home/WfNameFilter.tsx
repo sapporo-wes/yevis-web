@@ -1,7 +1,7 @@
 import { Autocomplete, TextField } from '@mui/material'
 import React from 'react'
 
-import { RootState, useAppDispatch, useAppSelector } from '@/store'
+import { useAppDispatch, useAppSelector } from '@/store'
 import { setWfName } from '@/store/filter'
 import { allWfNames } from '@/store/workflowsGetters'
 
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const WfNameFilter: React.VFC<Props> = (props: Props) => {
-  const wfs = useAppSelector((state: RootState) => state.workflows.wfs)
+  const wfs = useAppSelector((state) => state.workflows.wfs)
   const dispatch = useAppDispatch()
   const wfNames = allWfNames(wfs)
 
@@ -41,4 +41,4 @@ const WfNameFilter: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default WfNameFilter
+export default React.memo(WfNameFilter)

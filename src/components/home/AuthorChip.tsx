@@ -23,4 +23,4 @@ const AuthorChip: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default AuthorChip
+export default React.memo(AuthorChip)

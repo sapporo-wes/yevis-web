@@ -1,14 +1,14 @@
 import { Box } from '@mui/material'
 import React from 'react'
 
-import { RootState, useAppSelector } from '@/store'
+import { useAppSelector } from '@/store'
 
 interface Props {
   sx?: object
 }
 
 const ErrorMsg: React.VFC<Props> = (props: Props) => {
-  const error = useAppSelector((state: RootState) => state.workflows.error)
+  const error = useAppSelector((state) => state.workflows.error)
   return (
     <Box
       component='p'
@@ -21,4 +21,4 @@ const ErrorMsg: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default ErrorMsg
+export default React.memo(ErrorMsg)

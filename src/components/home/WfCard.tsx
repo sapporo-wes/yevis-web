@@ -114,4 +114,4 @@ const WfCard: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default WfCard
+export default React.memo(WfCard)

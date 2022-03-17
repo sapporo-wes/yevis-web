@@ -3,10 +3,11 @@ import yaml from 'js-yaml'
 import semver from 'semver'
 
 import { trsEndpoint, wfRepo, wfRepoGhPagesBranch } from '@/envDefault'
-import { VersionStatus } from '@/store/workflow'
+import { VersionStatus, RunResult } from '@/store/workflow'
 import {
   DraftWorkflow,
   DraftWorkflows,
+  isPublishedWorkflow,
   PublishedWorkflow,
   PublishedWorkflows,
 } from '@/store/workflows'
@@ -357,4 +358,80 @@ export const getDraftWorkflow = async (
     prId: pr.prId,
     version,
   }
+}
+
+// https://docs.github.com/ja/rest/reference/pulls#list-review-comments-on-a-pull-request
+export const getActionUrlsFromPrComments = async (
+  prId: number
+): Promise<string[]> => {
+  const comments = await request(
+    'GET /repos/{owner}/{repo}/issues/{issue_number}/comments',
+    {
+      issue_number: prId,
+      owner: wfRepo().split('/')[0],
+      repo: wfRepo().split('/')[1],
+    }
+  )
+  return comments.data
+    .filter((c) => c?.user?.login === 'github-actions[bot]')
+    .map((c) => {
+      if (typeof c?.body !== 'undefined') {
+        const result = c.body.match(/Test URL: (.*)/)
+        if (result !== null) {
+          return result[1]
+        }
+      }
+      return null
+    })
+    .filter((url) => !!url) as string[]
+}
+
+// https://docs.github.com/ja/rest/reference/actions#get-a-workflow-run
+export const getWorkflowRun = async (runId: number): Promise<RunResult> => {
+  const run = await request('GET /repos/{owner}/{repo}/actions/runs/{run_id}', {
+    owner: wfRepo().split('/')[0],
+    repo: wfRepo().split('/')[1],
+    run_id: runId,
+  })
+  return {
+    date: run.data.created_at,
+    status: run.data.status,
+    url: run.data.html_url,
+  }
+}
+
+export const fetchActionsResult = async (
+  wf: PublishedWorkflow | DraftWorkflow
+): Promise<RunResult[]> => {
+  // actionUrl examples:
+  // - https://github.com/ddbj/yevis-workflows-dev/actions/runs/1926766060
+  // - https://api.github.com/repos/ddbj/yevis-workflows-dev/actions/runs/1926766060
+  let actionUrls: string[]
+  if (isPublishedWorkflow(wf)) {
+    const verified_source = wf.toolVersion.verified_source
+    if (typeof verified_source === 'undefined') {
+      throw new Error('Failed to get action url from the workflow')
+    }
+    actionUrls = verified_source
+  } else {
+    actionUrls = await getActionUrlsFromPrComments(wf.prId)
+  }
+  const actionUrlExpr =
+    /^https:\/\/(api\.)?github\.com\/(repos\/)?((\w|-)+)\/((\w|-)+)\/actions\/runs\/(\d+)$/
+  const runIds: string[] = actionUrls
+    .map((actionUrl) => {
+      const match = actionUrl.match(actionUrlExpr)
+      if (match !== null) {
+        return match[7]
+      }
+      return null
+    })
+    .filter((url) => !!url) as string[]
+  if (runIds.length === 0) {
+    throw new Error('Failed to get run id from the workflow')
+  }
+  const runs = await Promise.all(
+    runIds.map((runId) => getWorkflowRun(parseInt(runId)))
+  )
+  return runs
 }

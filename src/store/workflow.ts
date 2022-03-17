@@ -6,6 +6,7 @@ import {
   isGhTrs,
   getPublishedWorkflow,
   getDraftWorkflow,
+  fetchActionsResult,
 } from '@/api/trs'
 import { fetchConfigContents } from '@/api/zenodo'
 import { RootState } from '@/store'
@@ -21,6 +22,12 @@ export interface FileContent {
 export interface VersionStatus {
   status: PublishStatus
   version: string
+}
+
+export interface RunResult {
+  date: string
+  status: string | null
+  url: string
 }
 
 export interface WorkflowState {
@@ -40,6 +47,12 @@ export interface WorkflowState {
         error: string | null
         loading: boolean
         requestId: string | null
+        tests: {
+          error: string | null
+          loading: boolean
+          requestId: string | null
+          results: RunResult[]
+        }
         wf: PublishedWorkflow | DraftWorkflow | null
       }
     }
@@ -152,6 +165,38 @@ export const fetchContents = createAsyncThunk(
   }
 )
 
+interface FetchTestsArgs {
+  id: string
+  version: string
+}
+
+interface FetchTestsMeta {
+  arg: FetchTestsArgs
+  requestId: string
+}
+
+export const fetchTests = createAsyncThunk(
+  'workflow/fetchTests',
+  async (
+    args: FetchTestsArgs,
+    { fulfillWithValue, rejectWithValue, getState, requestId }
+  ) => {
+    const wfState = (getState() as RootState).workflow as WorkflowState
+    if (wfState[args.id].versions[args.version].tests.requestId !== requestId) {
+      return rejectWithValue('Already fetched')
+    }
+    try {
+      const wf = wfState[args.id].versions[args.version].wf
+      if (wf !== null) {
+        const results = await fetchActionsResult(wf)
+        return fulfillWithValue(results)
+      }
+    } catch (err) {
+      return rejectWithValue((err as Error).message)
+    }
+  }
+)
+
 export const workflowSlice = createSlice({
   extraReducers: {
     // initializeWf -> fetchWf -> fetchContents
@@ -210,6 +255,12 @@ export const workflowSlice = createSlice({
             error: null,
             loading: true,
             requestId: action.meta.requestId,
+            tests: {
+              error: null,
+              loading: false,
+              requestId: null,
+              results: [],
+            },
             wf: null,
           }
         }
@@ -275,6 +326,39 @@ export const workflowSlice = createSlice({
         if (id in state && version in state[id].versions) {
           state[id].versions[version].contents.loading = false
           state[id].versions[version].contents.error = action.payload
+        }
+      }
+    },
+
+    [fetchTests.pending.type]: (
+      state,
+      action: PayloadAction<undefined, string, FetchTestsMeta>
+    ) => {
+      const { id, version } = action.meta.arg
+      if (id in state && version in state[id].versions) {
+        state[id].versions[version].tests.loading = true
+        state[id].versions[version].tests.requestId = action.meta.requestId
+      }
+    },
+    [fetchTests.fulfilled.type]: (
+      state,
+      action: PayloadAction<RunResult[], string, FetchTestsMeta>
+    ) => {
+      const { id, version } = action.meta.arg
+      if (id in state && version in state[id].versions) {
+        state[id].versions[version].tests.loading = false
+        state[id].versions[version].tests.results = action.payload
+      }
+    },
+    [fetchTests.rejected.type]: (
+      state,
+      action: PayloadAction<string, string, FetchTestsMeta>
+    ) => {
+      const { id, version } = action.meta.arg
+      if (action.payload !== 'Already fetched') {
+        if (id in state && version in state[id].versions) {
+          state[id].versions[version].tests.loading = false
+          state[id].versions[version].tests.error = action.payload
         }
       }
     },

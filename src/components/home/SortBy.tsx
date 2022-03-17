@@ -3,7 +3,7 @@ import SortByAlphaOutlinedIcon from '@mui/icons-material/SortByAlphaOutlined'
 import { ToggleButton, ToggleButtonGroup } from '@mui/material'
 import React from 'react'
 
-import { RootState, useAppDispatch, useAppSelector } from '@/store'
+import { useAppDispatch, useAppSelector } from '@/store'
 import { setSortBy, SortType } from '@/store/filter'
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const SortBy: React.VFC<Props> = (props: Props) => {
-  const sortBy = useAppSelector((state: RootState) => state.filter.sortBy)
+  const sortBy = useAppSelector((state) => state.filter.sortBy)
   const dispatch = useAppDispatch()
 
   return (
@@ -37,4 +37,4 @@ const SortBy: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default SortBy
+export default React.memo(SortBy)

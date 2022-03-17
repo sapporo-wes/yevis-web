@@ -8,7 +8,7 @@ interface SecondaryLinkProps {
   label: string
 }
 
-const SecondaryLink: React.VFC<SecondaryLinkProps> = (
+const SecondaryLinkComponent: React.VFC<SecondaryLinkProps> = (
   props: SecondaryLinkProps
 ) => {
   return (
@@ -24,6 +24,8 @@ const SecondaryLink: React.VFC<SecondaryLinkProps> = (
     />
   )
 }
+
+const SecondaryLink = React.memo(SecondaryLinkComponent)
 
 interface Props {
   sx?: object
@@ -93,4 +95,4 @@ const Hero: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default Hero
+export default React.memo(Hero)

@@ -6,8 +6,8 @@ export const topLoading = (
   id: string,
   version: string
 ): boolean => {
-  const initializeLoading = state[id]?.loading
-  const wfLoading = state[id]?.versions[version]?.loading
+  const initializeLoading = !!state[id]?.loading
+  const wfLoading = !!state[id]?.versions[version]?.loading
   return initializeLoading || wfLoading
 }
 

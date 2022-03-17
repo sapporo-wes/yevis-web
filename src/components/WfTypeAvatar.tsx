@@ -26,6 +26,7 @@ interface Props {
   sx?: object
   wfType: WfType
 }
+
 const WfTypeAvatar: React.VFC<Props> = (props: Props) => {
   return props.wfType ? (
     <Avatar
@@ -42,4 +43,4 @@ const WfTypeAvatar: React.VFC<Props> = (props: Props) => {
   )
 }
 
-export default WfTypeAvatar
+export default React.memo(WfTypeAvatar)
