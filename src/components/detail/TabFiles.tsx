@@ -2,6 +2,8 @@ import React from 'react'
 
 import FileDialog from '@/components/detail/FileDialog'
 import FileTree from '@/components/detail/FileTree'
+import ErrorMsg from '@/components/ErrorMsg'
+import LoadingMsg from '@/components/LoadingMsg'
 import { useAppSelector } from '@/store'
 import {
   FileItem,
@@ -30,6 +32,8 @@ const Files: React.VFC<Props> = (props: Props) => {
   if (typeof configFiles === 'undefined' || typeof contents === 'undefined') {
     return null
   }
+  const loading = contents.loading
+  const error = contents.error
 
   const items = extractItems(configFiles, '')
   const [selectedItem, setSelectedItem] = React.useState<FileItem | ''>('')
@@ -42,7 +46,11 @@ const Files: React.VFC<Props> = (props: Props) => {
     }
   }, [])
 
-  return (
+  return loading ? (
+    <LoadingMsg content='Loading tests content...' />
+  ) : error !== null ? (
+    <ErrorMsg error={error} />
+  ) : (
     <React.Fragment>
       <FileTree
         items={items}

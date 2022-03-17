@@ -1,10 +1,10 @@
 import { Box, Stack } from '@mui/material'
 import React from 'react'
 
-import ErrorMsg from '@/components/home/ErrorMsg'
+import ErrorMsg from '@/components/ErrorMsg'
 import Filters from '@/components/home/Filters'
-import LoadingMsg from '@/components/home/LoadingMsg'
 import WfCards from '@/components/home/WfCards'
+import LoadingMsg from '@/components/LoadingMsg'
 import { useAppSelector } from '@/store'
 
 interface Props {
@@ -30,9 +30,9 @@ const WfList: React.VFC<Props> = (props: Props) => {
         <Stack spacing={2}>
           <Filters />
           {loading ? (
-            <LoadingMsg />
+            <LoadingMsg content='Loading workflows...' />
           ) : error !== null ? (
-            <ErrorMsg />
+            <ErrorMsg error={error} />
           ) : (
             <WfCards />
           )}

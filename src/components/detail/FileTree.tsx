@@ -22,6 +22,8 @@ const FileTree: React.VFC<Props> = (props: Props) => {
         borderColor: theme.palette.divider,
         borderRadius: theme.spacing(0.5),
         ...props.sx,
+        px: 1,
+        py: 2,
       })}>
       <TreeView
         defaultCollapseIcon={<ExpandMoreIcon sx={{ fontSize: 20 }} />}

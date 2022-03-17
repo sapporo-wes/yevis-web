@@ -1,9 +1,11 @@
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import {
   Box,
   Dialog,
   DialogTitle,
   DialogContent,
   useTheme,
+  IconButton,
 } from '@mui/material'
 import React from 'react'
 import { Prism } from 'react-syntax-highlighter'
@@ -61,6 +63,13 @@ const FileDialog: React.VFC<Props> = (props: Props) => {
             sx={{ width: '140px' }}
             target={props.target}
             url={props.url}
+          />
+          <IconButton
+            children={<CloseRoundedIcon />}
+            color='primary'
+            component='span'
+            onClick={() => props.openHandler(false)}
+            sx={{ height: '2.4rem', width: '2.4rem' }}
           />
         </Box>
       </DialogTitle>

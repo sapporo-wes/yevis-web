@@ -40,7 +40,7 @@ const components: Components = {
         children={children}
         href={href}
         sx={{
-          color: 'secondary.main',
+          color: 'secondary.dark',
         }}
         target={target}
         underline='hover'

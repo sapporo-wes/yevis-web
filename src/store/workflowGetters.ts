@@ -1,5 +1,5 @@
 import { WorkflowState, WfVersion } from '@/store/workflow'
-import { File } from '@/types/ghTrs'
+import { File, TestFile, TestFileType, FileType } from '@/types/ghTrs'
 
 export const topLoading = (
   state: WorkflowState,
@@ -60,13 +60,16 @@ export interface FileItem {
   id: string
   itemType: 'file' | 'dir'
   label: string
-  type?: 'primary' | 'secondary'
+  type?: TestFileType | FileType
   url?: string
 }
 
-export const extractItems = (files: File[], parent: string): FileItem[] => {
+export const extractItems = (
+  files: (File | TestFile)[],
+  parent: string
+): FileItem[] => {
   const items: FileItem[] = []
-  const dirs: Record<string, File[]> = {}
+  const dirs: Record<string, (File | TestFile)[]> = {}
   files.forEach((file) => {
     const parts = (file.target || '').split('/')
     if (parts.length > 1) {

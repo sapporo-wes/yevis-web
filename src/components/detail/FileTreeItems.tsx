@@ -1,7 +1,7 @@
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined'
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined'
-import { TreeItem, treeItemClasses } from '@mui/lab'
-import { Box, Chip, Theme } from '@mui/material'
+import { TreeItem } from '@mui/lab'
+import { Box, Chip } from '@mui/material'
 import React from 'react'
 
 import { FileItem } from '@/store/workflowGetters'
@@ -38,10 +38,19 @@ const FileTreeItems: React.VFC<Props> = (props: Props) => {
                   />
                 )}
                 <Box children={item.label} sx={{ ml: 2 }} />
-                {item.type === 'primary' ? (
+                {typeof item.type !== 'undefined' &&
+                ['primary', 'wf_params', 'wf_engine_params'].includes(
+                  item.type
+                ) ? (
                   <Chip
                     color='primary'
-                    label='Primary Workflow'
+                    label={
+                      item.type === 'primary'
+                        ? 'Primary Workflow'
+                        : item.type === 'wf_params'
+                        ? 'Workflow Parameters'
+                        : 'Workflow Engine Parameters'
+                    }
                     size='small'
                     sx={{
                       fontSize: '0.75rem',
@@ -53,21 +62,6 @@ const FileTreeItems: React.VFC<Props> = (props: Props) => {
               </Box>
             }
             nodeId={item.id}
-            sx={(theme: Theme) => ({
-              my: 0.5,
-              [`.${treeItemClasses.content}`]: {
-                '&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused': {
-                  bgcolor:
-                    item.itemType === 'file'
-                      ? theme.palette.secondary.light
-                      : null,
-                  [`.${treeItemClasses.label}`]: {
-                    fontWeight: 600,
-                  },
-                },
-                borderRadius: theme.spacing(0.5),
-              },
-            })}
           />
         )
       })}
