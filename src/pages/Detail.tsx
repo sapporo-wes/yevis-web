@@ -46,7 +46,7 @@ const Detail: React.VFC = () => {
           <Stack spacing={4}>
             {loading ? (
               <ErrorHero
-                description='Please wait while we load the workflow.'
+                description='Please wait while loading the workflow.'
                 title='Loading...'
               />
             ) : error ? (

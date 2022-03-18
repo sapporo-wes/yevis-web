@@ -2,7 +2,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import React from 'react'
 import { Provider } from 'react-redux'
-import { Route, Routes, BrowserRouter } from 'react-router-dom'
+import { Route, Routes, HashRouter } from 'react-router-dom'
 
 import Detail from '@/pages/Detail'
 import Home from '@/pages/Home'
@@ -32,7 +32,7 @@ const theme = createTheme({
 
 const App: React.VFC = () => {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Provider store={store}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
@@ -46,7 +46,7 @@ const App: React.VFC = () => {
           </Routes>
         </ThemeProvider>
       </Provider>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 

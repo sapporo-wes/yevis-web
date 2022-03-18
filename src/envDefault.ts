@@ -1,5 +1,4 @@
 const DEFAULT_WF_REPO = 'ddbj/yevis-workflows'
-const DEFAULT_WF_REPO_BRANCH = 'main'
 const DEFAULT_WF_REPO_GH_PAGES_BRANCH = 'gh-pages'
 const DEFAULT_TRS_ENDPOINT = 'https://ddbj.github.io/yevis-workflows/'
 
@@ -9,14 +8,6 @@ export const wfRepo = (): string => {
     return DEFAULT_WF_REPO
   }
   return envWfRepo || DEFAULT_WF_REPO
-}
-
-export const wfRepoBranch = (): string => {
-  const envWfRepoBranch = import.meta.env.VITE_WF_REPO_BRANCH
-  if (typeof envWfRepoBranch === 'boolean') {
-    return DEFAULT_WF_REPO_BRANCH
-  }
-  return envWfRepoBranch || DEFAULT_WF_REPO_BRANCH
 }
 
 export const wfRepoGhPagesBranch = (): string => {

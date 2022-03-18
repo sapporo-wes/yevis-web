@@ -82,7 +82,6 @@ const FileDialog: React.VFC<Props> = (props: Props) => {
             backgroundColor: '#f5f5f5',
             border: `1px solid ${dividerColor}`,
             borderRadius: '0.25rem',
-            fontSize: '0.875rem',
             margin: '0',
           }}
           language={detectPrismType(props.target)}

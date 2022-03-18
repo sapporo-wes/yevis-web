@@ -5,7 +5,7 @@ import { defineConfig } from 'vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: './',
+  base: process.env.YEVIS_WEB_BASE || '/',
   build: {
     outDir: '../dist',
   },
