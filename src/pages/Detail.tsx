@@ -12,6 +12,7 @@ import {
   fetchWfs,
   fetchContents,
   fetchTests,
+  fetchLicenseInfo,
 } from '@/store/workflow'
 import { topLoading, topError } from '@/store/workflowGetters'
 
@@ -29,6 +30,7 @@ const Detail: React.VFC = () => {
       await Promise.allSettled([
         dispatch(fetchContents({ id, version })),
         dispatch(fetchTests({ id, version })),
+        dispatch(fetchLicenseInfo({ id, version })),
       ])
     })()
   }, [dispatch, id, version])

@@ -1,6 +1,7 @@
 /// Store for Detail Page
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
+import { LicenseInfo, getLicenseInfo } from '@/api/license'
 import {
   getAllVersions,
   isGhTrs,
@@ -45,6 +46,12 @@ export interface WorkflowState {
           requestId: string | null
         }
         error: string | null
+        licenseInfo: {
+          error: string | null
+          licenseInfo: LicenseInfo | null
+          loading: boolean
+          requestId: string | null
+        }
         loading: boolean
         requestId: string | null
         tests: {
@@ -202,6 +209,44 @@ export const fetchTests = createAsyncThunk(
   }
 )
 
+interface FetchLicenseInfoArgs {
+  id: string
+  version: string
+}
+
+interface FetchLicenseInfoMeta {
+  arg: FetchLicenseInfoArgs
+  requestId: string
+}
+
+export const fetchLicenseInfo = createAsyncThunk(
+  'workflow/fetchLicenseInfo',
+  async (
+    args: FetchLicenseInfoArgs,
+    { fulfillWithValue, rejectWithValue, getState, requestId }
+  ) => {
+    const wfState = (getState() as RootState).workflow as WorkflowState
+    if (
+      wfState[args.id].versions[args.version].licenseInfo.requestId !==
+      requestId
+    ) {
+      return rejectWithValue('Already fetched')
+    }
+    try {
+      const wf = wfState[args.id].versions[args.version].wf
+      if (wf !== null) {
+        const license = wf.config.license
+        if (typeof license !== 'undefined') {
+          const licenseInfo = await getLicenseInfo(license)
+          return fulfillWithValue(licenseInfo)
+        }
+      }
+    } catch (err) {
+      return rejectWithValue((err as Error).message)
+    }
+  }
+)
+
 export const workflowSlice = createSlice({
   extraReducers: {
     // initializeWf -> fetchWfs -> fetchContents
@@ -260,6 +305,12 @@ export const workflowSlice = createSlice({
                 requestId: null,
               },
               error: null,
+              licenseInfo: {
+                error: null,
+                licenseInfo: null,
+                loading: false,
+                requestId: null,
+              },
               loading: true,
               requestId: action.meta.requestId,
               tests: {
@@ -381,6 +432,42 @@ export const workflowSlice = createSlice({
         if (id in state && version in state[id].versions) {
           state[id].versions[version].tests.loading = false
           state[id].versions[version].tests.error = action.payload
+        }
+      }
+    },
+
+    [fetchLicenseInfo.pending.type]: (
+      state: WorkflowState,
+      action: PayloadAction<undefined, string, FetchLicenseInfoMeta>
+    ) => {
+      const { id, version } = action.meta.arg
+      if (id in state && version in state[id].versions) {
+        if (state[id].versions[version].licenseInfo.requestId === null) {
+          state[id].versions[version].licenseInfo.loading = true
+          state[id].versions[version].licenseInfo.requestId =
+            action.meta.requestId
+        }
+      }
+    },
+    [fetchLicenseInfo.fulfilled.type]: (
+      state: WorkflowState,
+      action: PayloadAction<LicenseInfo, string, FetchLicenseInfoMeta>
+    ) => {
+      const { id, version } = action.meta.arg
+      if (id in state && version in state[id].versions) {
+        state[id].versions[version].licenseInfo.loading = false
+        state[id].versions[version].licenseInfo.licenseInfo = action.payload
+      }
+    },
+    [fetchLicenseInfo.rejected.type]: (
+      state: WorkflowState,
+      action: PayloadAction<string, string, FetchLicenseInfoMeta>
+    ) => {
+      const { id, version } = action.meta.arg
+      if (action.payload !== 'Already fetched') {
+        if (id in state && version in state[id].versions) {
+          state[id].versions[version].licenseInfo.loading = false
+          state[id].versions[version].licenseInfo.error = action.payload
         }
       }
     },

@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import React from 'react'
 
-import AuthorChip from '@/components/home/AuthorChip'
+import AuthorChip from '@/components/AuthorChip'
 
 interface Props {
   authors: string[]

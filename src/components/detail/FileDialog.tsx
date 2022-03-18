@@ -66,7 +66,6 @@ const FileDialog: React.VFC<Props> = (props: Props) => {
           />
           <IconButton
             children={<CloseRoundedIcon />}
-            color='primary'
             component='span'
             onClick={() => props.openHandler(false)}
             sx={{ height: '2.4rem', width: '2.4rem' }}

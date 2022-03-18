@@ -1,4 +1,4 @@
-/// Store for Home Page
+// Store for Home Page
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { getDraftWorkflows, getPublishedWorkflows, isGhTrs } from '@/api/trs'

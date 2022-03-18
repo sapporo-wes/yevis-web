@@ -47,6 +47,7 @@ const TestResultList: React.VFC<Props> = (props: Props) => {
                   color='secondary.dark'
                   href={result.url}
                   target='_blank'
+                  underline='hover'
                 />
               </TableCell>
               <TableCell
