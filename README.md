@@ -1,6 +1,8 @@
 # yevis-web
 
-Web application for browsing workflows deployed by [ddbj/yevis-cli](https://github.com/ddbj/yevis-cli).
+Web application for browsing workflows deployed by [`ddbj/yevis-cli`](https://github.com/ddbj/yevis-cli).
+
+[https://ddbj.github.io/yevis-web/](https://ddbj.github.io/yevis-web/) is deployed for [`ddbj/yevis-workflows`](https://github.com/ddbj/yevis-workflows).
 
 ## Development
 
