@@ -19,6 +19,10 @@ jobs:
 
       - name: Build
         run: YEVIS_WEB_BASE=/${{ github.event.repository.name }}/ npm run build
+        env:
+          VITE_WF_REPO: ${{ github.event.inputs.wf-repository }}
+          VITE_WF_REPO_GH_PAGES_BRANCH: ${{ github.event.inputs.gh-pages-branch }}
+          VITE_TRS_ENDPOINT: ${{ github.event.inputs.trs-endpoint }}
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
