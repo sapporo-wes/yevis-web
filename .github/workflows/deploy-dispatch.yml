@@ -10,6 +10,7 @@ on:
       gh-pages-branch:
         type: string
         default: gh-pages
+        description: GitHub Pages branch (of Yevis workflow registry)
       trs-endpoint:
         type: string
         required: true
