@@ -1,7 +1,19 @@
 name: deploy-dispatch
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      wf-repository:
+        type: string
+        required: true
+        description: Yevis workflow registry (owner/name)
+      gh-pages-branch:
+        type: string
+        default: gh-pages
+      trs-endpoint:
+        type: string
+        required: true
+        description: TRS API endpoint (e.g., https://${repo_owner}.github.io/${repo_name}/)
 
 jobs:
   deploy:
