@@ -1,8 +1,15 @@
 # yevis-web
 
-Web application for browsing workflows deployed by [`ddbj/yevis-cli`](https://github.com/ddbj/yevis-cli).
+Web application for browsing Yevis workflow registry.
 
-[https://ddbj.github.io/yevis-web/](https://ddbj.github.io/yevis-web/) is deployed for [`ddbj/yevis-workflows`](https://github.com/ddbj/yevis-workflows).
+**[https://ddbj.github.io/yevis-web/](https://ddbj.github.io/yevis-web/)** is deployed for [`ddbj/workflow-registry`](https://github.com/ddbj/workflow-registry).
+
+In addition, see the below links:
+
+- [`ddbj/workflow-registry`](https://github.com/ddbj/workflow-registry): a workflow registry built and maintained by [DDBJ](https://www.ddbj.nig.ac.jp/) using `yevis-cli`
+- [`ddbj/yevis-cli`](https://github.com/ddbj/yevis-cli): a CLI tool to support building and maintaining Yevis workflow registry
+- [`Yevis Getting Started`](https://github.com/ddbj/yevis-cli/blob/main/docs/getting_started.md): the document for Yevis system installation and usage
+- [`Yevis Getting Started Ja`](https://github.com/ddbj/yevis-cli/blob/main/docs/getting_started_ja.md): 日本語での Yevis system の使い方
 
 ## Development
 
@@ -50,9 +57,9 @@ Create a `.env` file and set them to change them.
 
 ---
 
-To deploy the `yevis-web` to GitHub Pages, the application `base` needs to be set. (See [Vite - Guide - GitHub Pages](https://vitejs.dev/guide/static-deploy.html#github-pages) as a reference)
+To deploy `yevis-web` to GitHub Pages, application `base` needs to be set. (See [Vite - Guide - GitHub Pages](https://vitejs.dev/guide/static-deploy.html#github-pages) as a reference)
 
-Pass the environment variable `YEVIS_WEB_BASE` to set the `base` at build time:
+Pass the environment variable `YEVIS_WEB_BASE` to set `base` at build time:
 
 ```bash
 $ YEVIS_WEB_BASE=/yevis-web/ npm run build
@@ -70,4 +77,5 @@ $ gh-pages -d ./dist
 
 ## License
 
-[Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0). See the [LICENSE](https://github.com/ddbj/yevis-cli/blob/main/LICENSE).
+[Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0).
+See the [LICENSE](https://github.com/ddbj/yevis-cli/blob/main/LICENSE).
