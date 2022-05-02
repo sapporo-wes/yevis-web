@@ -101,7 +101,7 @@ export const getToolVersion = async (
   return await res.json()
 }
 
-export const getGhTrsConfig = async (
+export const getYevisMetadata = async (
   id: string,
   version: string
 ): Promise<Config> => {
@@ -109,7 +109,7 @@ export const getGhTrsConfig = async (
     `${trsEndpoint().replace(
       /\/$/,
       ''
-    )}/tools/${id}/versions/${version}/gh-trs-config.json`,
+    )}/tools/${id}/versions/${version}/yevis-metadata.json`,
     {
       method: 'GET',
     }
@@ -119,7 +119,7 @@ export const getGhTrsConfig = async (
       `Failed to get ${trsEndpoint().replace(
         /\/$/,
         ''
-      )}/tools/${id}/versions/${version}/gh-trs-config.json with error: ${
+      )}/tools/${id}/versions/${version}/yevis-metadata.json with error: ${
         res.status
       } ${res.statusText}`
     )
@@ -129,12 +129,12 @@ export const getGhTrsConfig = async (
 
 // params: [id, version][]
 // return: { `${id}_${version}`: Config }
-export const getGhTrsConfigs = async (
+export const getYevisMetadataFiles = async (
   idVersions: [string, string][]
 ): Promise<Record<string, Config>> => {
   const configs: Record<string, Config> = {} // key: ${id}_${version}
   const results = await Promise.all(
-    idVersions.map(([id, version]) => getGhTrsConfig(id, version))
+    idVersions.map(([id, version]) => getYevisMetadata(id, version))
   )
   results.forEach((config) => {
     configs[`${config.id}_${config.version}`] = config
@@ -149,7 +149,7 @@ export const getLastModifiedDate = async (
 ): Promise<string> => {
   const commits = await request('GET /repos/{owner}/{repo}/commits', {
     owner: wfRepo().split('/')[0],
-    path: `tools/${id}/versions/${version}/gh-trs-config.json`,
+    path: `tools/${id}/versions/${version}/yevis-metadata.json`,
     per_page: 1,
     repo: wfRepo().split('/')[1],
     sha: wfRepoGhPagesBranch(),
@@ -199,7 +199,7 @@ export const getPublishedWorkflows = async (): Promise<PublishedWorkflows> => {
     (toolVersion) => [toolVersion.id, extractVersionStr(toolVersion)]
   )
   const [configs, modifiedDate] = await Promise.all([
-    getGhTrsConfigs(latestIdVersions),
+    getYevisMetadataFiles(latestIdVersions),
     getLastModifiedDates(latestIdVersions),
   ])
   const publishedWorkflows: PublishedWorkflows = {}
@@ -331,7 +331,7 @@ export const getPublishedWorkflow = async (
 ): Promise<PublishedWorkflow> => {
   const [toolVersion, config, modifiedDate] = await Promise.all([
     getToolVersion(id, version),
-    getGhTrsConfig(id, version),
+    getYevisMetadata(id, version),
     getLastModifiedDate(id, version),
   ])
   return {
