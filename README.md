@@ -11,14 +11,15 @@ In addition, see the below links:
 
 - [`ddbj/workflow-registry`](https://github.com/ddbj/workflow-registry): a workflow registry built and maintained by [DDBJ](https://www.ddbj.nig.ac.jp/) using `yevis-cli`
 - [`ddbj/yevis-cli`](https://github.com/ddbj/yevis-cli): a CLI tool to support building and maintaining Yevis workflow registry
-- [`Yevis Getting Started`](https://github.com/ddbj/yevis-cli/blob/main/docs/getting_started.md): the document for Yevis system installation and usage
-- [`Yevis Getting Started Ja`](https://github.com/ddbj/yevis-cli/blob/main/docs/getting_started_ja.md): 日本語での Yevis system の使い方
+- [`Yevis Getting Started`](https://ddbj.github.io/yevis-cli/getting_started): the document for Yevis system installation and usage
+- [`Yevis Getting Started Ja`](https://ddbj.github.io/yevis-cli/getting_started_ja): 日本語での Yevis system の使い方
 
 ## Development
 
 Launch the development server:
 
 ```bash
+$ npm ci
 $ npm run dev
 > yevis-web@0.0.0 dev
 > vite
@@ -30,11 +31,20 @@ $ npm run dev
 
 ### Build and Deploy
 
+#### Deploy to GitHub Pages
+
+See [Yevis Getting Started](https://ddbj.github.io/yevis-cli/getting_started#2-preparation-of-yevis-web).
+
+You can build and deploy using GitHub Action and GitHub Pages.
+
+#### Deploy to other than GitHub Pages
+
 See [Vite - Guide - Deploying a Static Site](https://vitejs.dev/guide/static-deploy.html) as a reference.
 
 Build and local preview:
 
 ```bash
+$ npm ci
 $ npm run build
 $ npm run preview
 ```
@@ -60,22 +70,11 @@ Create a `.env` file and set them to change them.
 
 ---
 
-To deploy `yevis-web` to GitHub Pages, application `base` needs to be set. (See [Vite - Guide - GitHub Pages](https://vitejs.dev/guide/static-deploy.html#github-pages) as a reference)
-
-Pass the environment variable `YEVIS_WEB_BASE` to set `base` at build time:
+Pass the environment variable `YEVIS_WEB_BASE` to set `base` at build time (See [Vite - Guide - GitHub Pages](https://vitejs.dev/guide/static-deploy.html#github-pages) as a reference):
 
 ```bash
 $ YEVIS_WEB_BASE=/yevis-web/ npm run build
 $ YEVIS_WEB_BASE=/yevis-web/ npm run preview
-```
-
----
-
-Then deploy to GitHub Pages using [npm - gh-pages](https://www.npmjs.com/package/gh-pages), etc.
-
-```bash
-$ npm install -g gh-pages
-$ gh-pages -d ./dist
 ```
 
 ## License
