@@ -5,7 +5,7 @@
 
 Web application for browsing Yevis workflow registry.
 
-**[https://ddbj.github.io/yevis-web/](https://ddbj.github.io/yevis-web/)** is deployed for [`ddbj/workflow-registry`](https://github.com/ddbj/workflow-registry).
+**[https://ddbj.github.io/workflow-registry-browser/](https://ddbj.github.io/workflow-registry-browser/)** is deployed for [`ddbj/workflow-registry`](https://github.com/ddbj/workflow-registry).
 
 In addition, see the below links:
 
