@@ -1,5 +1,8 @@
 # yevis-web
 
+[![DOI](https://zenodo.org/badge/442338847.svg)](https://zenodo.org/badge/latestdoi/442338847)
+[![Apache License](https://img.shields.io/badge/license-Apache%202.0-orange.svg?style=flat&color=important)](http://www.apache.org/licenses/LICENSE-2.0)
+
 Web application for browsing Yevis workflow registry.
 
 **[https://ddbj.github.io/yevis-web/](https://ddbj.github.io/yevis-web/)** is deployed for [`ddbj/workflow-registry`](https://github.com/ddbj/workflow-registry).
