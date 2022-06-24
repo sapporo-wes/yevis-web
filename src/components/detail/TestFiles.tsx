@@ -56,7 +56,7 @@ const TestFiles: React.VFC<Props> = (props: Props) => {
           flexDirection: 'column',
           rowGap: 2,
         }}>
-        <FormControl sx={{ width: '120px' }} variant='standard'>
+        <FormControl sx={{ width: '200px' }} variant='standard'>
           <InputLabel children='Test Id' />
           <Select
             color='secondary'

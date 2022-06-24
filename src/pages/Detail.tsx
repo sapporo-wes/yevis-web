@@ -6,6 +6,7 @@ import Contents from '@/components/detail/Contents'
 import Hero from '@/components/detail/Hero'
 import ErrorHero from '@/components/ErrorHero'
 import Footer from '@/components/Footer'
+import { wfRepo } from '@/envDefault'
 import { useAppDispatch, useAppSelector } from '@/store'
 import {
   initializeWf,
@@ -24,6 +25,7 @@ const Detail: React.VFC = () => {
 
   const dispatch = useAppDispatch()
   React.useEffect(() => {
+    document.title = `Yevis Web ${wfRepo()}`
     ;(async () => {
       await dispatch(initializeWf({ id }))
       await dispatch(fetchWfs({ id }))

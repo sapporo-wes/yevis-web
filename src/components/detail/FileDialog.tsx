@@ -44,23 +44,22 @@ const FileDialog: React.VFC<Props> = (props: Props) => {
           }}>
           <Box
             children={props.target}
-            component='span'
             sx={{
               color: 'primary.main',
               flexGrow: 1,
               fontSize: '1.4rem',
               fontWeight: 500,
               my: 0,
+              wordBreak: 'break-word',
             }}
           />
           <CopyButton
             content={props.content}
             disabled={props.buttonDisabled}
-            sx={{ width: '140px' }}
+            sx={{ maxWidth: '140px', minWidth: '140px' }}
           />
           <DownloadButton
-            disabled={props.buttonDisabled}
-            sx={{ width: '140px' }}
+            sx={{ maxWidth: '140px', minWidth: '140px' }}
             target={props.target}
             url={props.url}
           />

@@ -3,8 +3,13 @@ import React from 'react'
 
 import ErrorHero from '@/components/ErrorHero'
 import Footer from '@/components/Footer'
+import { wfRepo } from '@/envDefault'
 
 const NoPage: React.VFC = () => {
+  React.useEffect(() => {
+    document.title = `Yevis Web ${wfRepo()}`
+  }, [])
+
   return (
     <React.Fragment>
       <main>

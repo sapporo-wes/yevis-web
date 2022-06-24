@@ -21,7 +21,12 @@ const FileTreeItems: React.VFC<Props> = (props: Props) => {
             }
             key={item.id}
             label={
-              <Box sx={{ alignItems: 'center', display: 'flex', my: 0.5 }}>
+              <Box
+                sx={{
+                  alignItems: 'center',
+                  display: 'flex',
+                  my: 0.5,
+                }}>
                 {item.itemType === 'file' ? (
                   <InsertDriveFileOutlinedIcon
                     sx={{
@@ -37,7 +42,16 @@ const FileTreeItems: React.VFC<Props> = (props: Props) => {
                     }}
                   />
                 )}
-                <Box children={item.label} sx={{ ml: 2 }} />
+                <Box
+                  children={item.label}
+                  sx={{
+                    boxSizing: 'border-box',
+                    ml: 2,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                />
                 {typeof item.type !== 'undefined' &&
                 ['primary', 'wf_params', 'wf_engine_params'].includes(
                   item.type

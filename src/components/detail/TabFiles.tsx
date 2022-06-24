@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import React from 'react'
 
 import FileDialog from '@/components/detail/FileDialog'
@@ -46,32 +47,38 @@ const Files: React.VFC<Props> = (props: Props) => {
     }
   }, [])
 
-  return loading ? (
-    <LoadingMsg content='Loading tests content...' />
-  ) : error !== null ? (
-    <ErrorMsg error={error} />
-  ) : (
-    <React.Fragment>
-      <FileTree
-        items={items}
-        selectHandler={treeNodeSelectHandler}
-        selectedItem={selectedItem}
-        sx={props.sx}
-      />
-      {selectedItem !== '' && selectedItem.itemType === 'file' && (
-        <FileDialog
-          buttonDisabled={
-            contentLoading(contents, selectedItem.id) ||
-            contentError(contents, selectedItem.id) !== null
-          }
-          content={contentDisplay(contents, selectedItem.id)}
-          dialogOpen={dialogOpen}
-          openHandler={setDialogOpen}
-          target={selectedItem.id}
-          url={selectedItem.url || ''}
-        />
+  return (
+    <Box
+      sx={{
+        ...props.sx,
+      }}>
+      {loading ? (
+        <LoadingMsg content='Loading files content...' />
+      ) : error !== null ? (
+        <ErrorMsg error={error} />
+      ) : (
+        <React.Fragment>
+          <FileTree
+            items={items}
+            selectHandler={treeNodeSelectHandler}
+            selectedItem={selectedItem}
+          />
+          {selectedItem !== '' && selectedItem.itemType === 'file' && (
+            <FileDialog
+              buttonDisabled={
+                contentLoading(contents, selectedItem.id) ||
+                contentError(contents, selectedItem.id) !== null
+              }
+              content={contentDisplay(contents, selectedItem.id)}
+              dialogOpen={dialogOpen}
+              openHandler={setDialogOpen}
+              target={selectedItem.id}
+              url={selectedItem.url || ''}
+            />
+          )}
+        </React.Fragment>
       )}
-    </React.Fragment>
+    </Box>
   )
 }
 

@@ -39,9 +39,9 @@ export const isGhTrs = async (): Promise<void> => {
   if (!version) {
     throw new Error('Failed to get version from service-info')
   }
-  if (!(artifact === 'gh-trs' && version === '2.0.1')) {
+  if (!(['gh-trs', 'yevis'].includes(artifact) && version === '2.0.1')) {
     throw new Error(
-      `The ddbj/yevis-web only supports artifact: gh-trs and version: 2.0.1 as a TRS API. The response from service-info is artifact: ${artifact} and version: ${version}`
+      `The ddbj/yevis-web only supports artifact: gh-trs or yevis, and version: 2.0.1 as a TRS API. The response from service-info is artifact: ${artifact} and version: ${version}`
     )
   }
 }

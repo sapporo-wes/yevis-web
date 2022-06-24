@@ -3,7 +3,6 @@ import { Button } from '@mui/material'
 import React from 'react'
 
 interface Props {
-  disabled: boolean
   sx?: object
   target: string
   url: string
@@ -15,7 +14,7 @@ const DownloadButton: React.VFC<Props> = (props: Props) => {
     <Button
       children={'Download'}
       color='secondary'
-      disabled={props.url === '' || props.disabled}
+      disabled={props.url === ''}
       onClick={() => {
         const link = document.createElement('a')
         link.href = props.url

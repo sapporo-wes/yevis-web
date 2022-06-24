@@ -10,34 +10,23 @@ Web application for browsing Yevis workflow registry.
 In addition, see the below links:
 
 - [`ddbj/workflow-registry`](https://github.com/ddbj/workflow-registry): a workflow registry built and maintained by [DDBJ](https://www.ddbj.nig.ac.jp/) using `yevis-cli`
-- [`ddbj/yevis-cli`](https://github.com/ddbj/yevis-cli): a CLI tool to support building and maintaining Yevis workflow registry
+- [`ddbj/yevis-cli`](https://github.com/ddbj/yevis-cli): a CLI tool to support building and maintaining the Yevis workflow registry
 - [`Yevis Getting Started`](https://ddbj.github.io/yevis-cli/getting_started): the document for Yevis system installation and usage
 - [`Yevis Getting Started Ja`](https://ddbj.github.io/yevis-cli/getting_started_ja): 日本語での Yevis system の使い方
 
-## Development
+## Build and Deploy
 
-Launch the development server:
+We used `node.js v18.x` and `Google Chrome` for development.
+If you use an older version of `node.js`, `yevis-web` may not work properly.
+At least, the dependent library `Vite` requires `node.js >= 14.6.0`.
 
-```bash
-$ npm ci
-$ npm run dev
-> yevis-web@0.0.0 dev
-> vite
-  vite v2.8.3 dev server running at:
-
-  > Local: http://localhost:3000/
-  > Network: use `--host` to expose
-```
-
-### Build and Deploy
-
-#### Deploy to GitHub Pages
+### Deploy to GitHub Pages
 
 See [Yevis Getting Started](https://ddbj.github.io/yevis-cli/getting_started#2-preparation-of-yevis-web).
 
 You can build and deploy using GitHub Action and GitHub Pages.
 
-#### Deploy to other than GitHub Pages
+### Deploy to other than GitHub Pages
 
 See [Vite - Guide - Deploying a Static Site](https://vitejs.dev/guide/static-deploy.html) as a reference.
 
@@ -70,11 +59,26 @@ Create a `.env` file and set them to change them.
 
 ---
 
-Pass the environment variable `YEVIS_WEB_BASE` to set `base` at build time (See [Vite - Guide - GitHub Pages](https://vitejs.dev/guide/static-deploy.html#github-pages) as a reference):
+Pass the environment variable `YEVIS_WEB_BASE` to set the `base` at build time (See [Vite - Guide - GitHub Pages](https://vitejs.dev/guide/static-deploy.html#github-pages) as a reference):
 
 ```bash
 $ YEVIS_WEB_BASE=/yevis-web/ npm run build
 $ YEVIS_WEB_BASE=/yevis-web/ npm run preview
+```
+
+## Development
+
+Launch the development server:
+
+```bash
+$ npm ci
+$ npm run dev
+> yevis-web@0.0.0 dev
+> vite
+  vite v2.8.3 dev server running at:
+
+  > Local: http://localhost:3000/
+  > Network: use `--host` to expose
 ```
 
 ## License
