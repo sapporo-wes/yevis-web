@@ -41,7 +41,7 @@ export const isGhTrs = async (): Promise<void> => {
   }
   if (!(['gh-trs', 'yevis'].includes(artifact) && version === '2.0.1')) {
     throw new Error(
-      `The ddbj/yevis-web only supports artifact: gh-trs or yevis, and version: 2.0.1 as a TRS API. The response from service-info is artifact: ${artifact} and version: ${version}`
+      `Yevis-web only supports artifact: gh-trs or yevis, and version: 2.0.1 as a TRS API. The response from service-info is artifact: ${artifact} and version: ${version}`
     )
   }
 }
@@ -251,8 +251,6 @@ export const getPullRequests = async (): Promise<PRInfo[]> => {
 }
 
 // https://docs.github.com/ja/rest/reference/pulls#list-pull-requests-files
-// draft raw url example: https://github.com/ddbj/yevis-workflows-dev/raw/68b0c0d92505c93a37d4b4d7180136d785f631bb/1fdc5861-c146-40f5-bb76-bcb5955cee11/yevis-config-1.0.0.yml
-// raw url example: https://raw.githubusercontent.com/ddbj/yevis-workflows-dev/68b0c0d92505c93a37d4b4d7180136d785f631bb/1fdc5861-c146-40f5-bb76-bcb5955cee11/yevis-config-1.0.0.yml
 export const getConfigFromPr = async (prId: number): Promise<Config> => {
   const files = await request(
     'GET /repos/{owner}/{repo}/pulls/{pull_number}/files',

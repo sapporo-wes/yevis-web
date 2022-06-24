@@ -10,9 +10,9 @@ Web application for browsing Yevis workflow registry.
 In addition, see the below links:
 
 - [`ddbj/workflow-registry`](https://github.com/ddbj/workflow-registry): a workflow registry built and maintained by [DDBJ](https://www.ddbj.nig.ac.jp/) using `yevis-cli`
-- [`ddbj/yevis-cli`](https://github.com/ddbj/yevis-cli): a CLI tool to support building and maintaining the Yevis workflow registry
-- [`Yevis Getting Started`](https://ddbj.github.io/yevis-cli/getting_started): the document for Yevis system installation and usage
-- [`Yevis Getting Started Ja`](https://ddbj.github.io/yevis-cli/getting_started_ja): 日本語での Yevis system の使い方
+- [`sapporo-wes/yevis-cli`](https://github.com/sapporo-wes/yevis-cli): a CLI tool to support building and maintaining the Yevis workflow registry
+- [`Yevis Getting Started`](https://sapporo-wes.github.io/yevis-cli/getting_started): the document for Yevis system installation and usage
+- [`Yevis Getting Started Ja`](https://sapporo-wes.github.io/yevis-cli/getting_started_ja): 日本語での Yevis system の使い方
 
 ## Build and Deploy
 
@@ -22,7 +22,7 @@ At least, the dependent library `Vite` requires `node.js >= 14.6.0`.
 
 ### Deploy to GitHub Pages
 
-See [Yevis Getting Started](https://ddbj.github.io/yevis-cli/getting_started#2-preparation-of-yevis-web).
+See [Yevis Getting Started](https://sapporo-wes.github.io/yevis-cli/getting_started#2-preparation-of-yevis-web).
 
 You can build and deploy using GitHub Action and GitHub Pages.
 
@@ -84,4 +84,4 @@ $ npm run dev
 ## License
 
 [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0).
-See the [LICENSE](https://github.com/ddbj/yevis-cli/blob/main/LICENSE).
+See the [LICENSE](https://github.com/sapporo-wes/yevis-web/blob/main/LICENSE).
