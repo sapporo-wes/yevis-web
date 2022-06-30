@@ -1,6 +1,6 @@
-const DEFAULT_WF_REPO = 'ddbj/yevis-workflows'
+const DEFAULT_WF_REPO = 'ddbj/workflow-registry'
 const DEFAULT_WF_REPO_GH_PAGES_BRANCH = 'gh-pages'
-const DEFAULT_TRS_ENDPOINT = 'https://ddbj.github.io/yevis-workflows/'
+const DEFAULT_TRS_ENDPOINT = 'https://ddbj.github.io/workflow-registry/'
 
 export const wfRepo = (): string => {
   const envWfRepo = import.meta.env.VITE_WF_REPO

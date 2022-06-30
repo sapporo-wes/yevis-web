@@ -181,22 +181,22 @@ export const getLastModifiedDates = async (
 
 export const latestToolVersion = (tool: Tool): ToolVersion => {
   const sortedTools = tool.versions.sort((a, b) => {
-    const aVer = a.url.split('/').pop() || '0.0.0'
-    const bVer = b.url.split('/').pop() || '0.0.0'
+    const aVer = a.id
+    const bVer = b.id
     return semver.compare(aVer, bVer)
   })
   return sortedTools[sortedTools.length - 1]
 }
 
 export const extractVersionStr = (toolVersion: ToolVersion): string => {
-  return toolVersion.url.split('/').pop() || ''
+  return toolVersion.id
 }
 
 export const getPublishedWorkflows = async (): Promise<PublishedWorkflows> => {
   const tools = await getTools()
   const latestToolVersions = tools.map((tool) => latestToolVersion(tool))
   const latestIdVersions: [string, string][] = latestToolVersions.map(
-    (toolVersion) => [toolVersion.id, extractVersionStr(toolVersion)]
+    (toolVersion, i) => [tools[i].id, extractVersionStr(toolVersion)]
   )
   const [configs, modifiedDate] = await Promise.all([
     getYevisMetadataFiles(latestIdVersions),

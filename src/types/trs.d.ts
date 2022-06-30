@@ -63,7 +63,7 @@ export type ToolVersion = {
   author?: string[]
   name?: string
   url: string
-  id: string
+  id: string // version id
   is_production?: boolean
   images?: ImageData[]
   descriptor_type?: DescriptorType[]

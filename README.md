@@ -43,9 +43,9 @@ $ npm run preview
 To manage the `yevis-web`, describe a `.env` file as follows:
 
 ```
-VITE_WF_REPO=ddbj/yevis-workflows
+VITE_WF_REPO=ddbj/workflow-registry
 VITE_WF_REPO_GH_PAGES_BRANCH=gh-pages
-VITE_TRS_ENDPOINT=https://ddbj.github.io/yevis-workflows/
+VITE_TRS_ENDPOINT=https://ddbj.github.io/workflow-registry/
 ```
 
 As an explanation of these variables:
